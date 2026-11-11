@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Command Cheat Sheet & Guide</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Kanit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50: '#FAF7F2',
+                            100: '#F3EDE2',
+                            200: '#E8DCB8',
+                            300: '#DDD0B3',
+                            800: '#4A3E3D',
+                            900: '#2C2221',
+                        },
+                        terracotta: {
+                            400: '#E07A5F',
+                            500: '#D96B43',
+                            600: '#C45731',
+                            700: '#A04222',
+                        },
+                        sand: '#E6D5C3',
+                    },
+                    fontFamily: {
+                        sans: ['Kanit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF7F2;
+            color: #2C2221;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(217, 107, 67, 0.15);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F3EDE2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #DDD0B3;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D96B43;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-terracotta-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="bg-cream-100 border-b border-cream-200 sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-terracotta-500 text-white rounded-xl shadow-md">
+                        <i data-lucide="git-branch" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-cream-900 leading-tight">Git Command Cheatsheet</h1>
+                        <p class="text-sm text-cream-800 opacity-80">คู่มือรวมคำสั่ง Git สำหรับการทำงานร่วมกัน การแก้ Conflict และย้อนเวอร์ชัน</p>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative min-w-[280px]">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-cream-800/50"></i>
+                    <input type="text" id="searchInput" placeholder="ค้นหาคำสั่ง เช่น push, merge, revert..." 
+                           class="w-full pl-10 pr-4 py-2 bg-cream-50 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-terracotta-500 text-sm placeholder:text-cream-800/40 transition">
+                </div>
+            </div>
+
+            <!-- Categories Tabs -->
+            <div class="flex gap-2 mt-4 overflow-x-auto pb-1 text-sm no-scrollbar" id="categoryFilter">
+                <button data-cat="all" class="cat-btn px-4 py-1.5 rounded-lg bg-terracotta-500 text-white font-medium transition shadow-sm">ทั้งหมด</button>
+                <button data-cat="basic" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">คำสั่งพื้นฐาน</button>
+                <button data-cat="teamwork" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">การทำงานเป็นทีม</button>
+                <button data-cat="conflict" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">การแก้ Conflict</button>
+                <button data-cat="undo" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">การย้อนเวอร์ชัน</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Interactive Workflow Highlight -->
+        <section class="mb-10 bg-gradient-to-br from-cream-100 to-cream-200 rounded-2xl p-6 border border-cream-300 shadow-sm">
+            <h2 class="text-lg font-semibold text-cream-900 mb-4 flex items-center gap-2">
+                <i data-lucide="users" class="w-5 h-5 text-terracotta-500"></i>
+                Workflow การทำงานร่วมกันหลายคนใน 1 Repo (แนะนำ)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
+                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 1</span>
+                    <h3 class="font-medium text-cream-900 mb-1">ดึงโค้ดล่าสุดจาก main</h3>
+                    <p class="text-cream-800/80 text-xs">ก่อนเริ่มงานใหม่ทุกครั้งเพื่อป้องกันโค้ดล้าสมัย</p>
+                    <code class="block mt-2 text-xs bg-cream-100 p-1.5 rounded font-mono text-terracotta-600">git pull origin main</code>
+                </div>
+                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
+                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 2</span>
+                    <h3 class="font-medium text-cream-900 mb-1">สร้าง Branch ใหม่</h3>
+                    <p class="text-cream-800/80 text-xs">แยกทำเฉพาะฟีเจอร์ของตนเอง ไม่แก้บน main ตรงๆ</p>
+                    <code class="block mt-2 text-xs bg-cream-100 p-1.5 rounded font-mono text-terracotta-600">git checkout -b my-feature</code>
+                </div>
+                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
+                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 3</span>
+                    <h3 class="font-medium text-cream-900 mb-1">Commit & Push งาน</h3>
+                    <p class="text-cream-800/80 text-xs">บันทึกและส่ง Branch ขึ้น GitHub เพื่อขอรวมโค้ด</p>
+                    <code class="block mt-2 text-xs bg-cream-100 p-1.5 rounded font-mono text-terracotta-600">git push -u origin my-feature</code>
+                </div>
+                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
+                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 4</span>
+                    <h3 class="font-medium text-cream-900 mb-1">ทำ Pull Request (PR)</h3>
+                    <p class="text-cream-800/80 text-xs">ส่งคำขอ Merge ให้เพื่อนช่วยตรวจโค้ดก่อนรวมเข้า main</p>
+                    <span class="block mt-2 text-xs text-terracotta-600 font-semibold">ทำผ่านหน้าเว็บ GitHub</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Command Cards Grid -->
+        <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be dynamically populated/filtered by JS -->
+        </div>
+
+        <div id="noResults" class="hidden text-center py-12">
+            <i data-lucide="search-x" class="w-12 h-12 text-cream-800/40 mx-auto mb-3"></i>
+            <p class="text-cream-800 text-lg font-medium">ไม่พบคำสั่งที่ค้นหา</p>
+            <p class="text-cream-800/60 text-sm">ลองค้นหาด้วยคำอื่นๆ เช่น branch, log, reset</p>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-cream-900 text-cream-50 px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i data-lucide="check-circle" class="w-5 h-5 text-terracotta-400"></i>
+        <span id="toastText" class="text-sm font-medium">คัดลอกคำสั่งแล้ว!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-cream-100 border-t border-cream-200 mt-12 py-6 text-center text-sm text-cream-800/70">
+        <p>Git Reference Guide — พัฒนาขึ้นด้วย HTML & Tailwind CSS ธีมถนอมสายตา</p>
+    </footer>
+
+    <script>
+        // Data Structure for Git Commands
+        const commands = [
+            // Basic
+            {
+                category: 'basic',
+                cmd: 'git init',
+                desc: 'เริ่มต้นสร้าง Git Repository ในโฟลเดอร์ปัจจุบัน',
+                details: 'ใช้เพียงครั้งเดียวเมื่อต้องการเริ่มติดตามประวัติของโปรเจกต์ใหม่',
+                tags: ['init', 'setup', 'เริ่มโปรเจกต์']
+            },
+            {
+                category: 'basic',
+                cmd: 'git clone <url>',
+                desc: 'ดาวน์โหลด Repository จาก GitHub ลงมาที่เครื่องคอมพิวเตอร์',
+                details: 'ใช้เมื่อต้องการคัดลอกโปรเจกต์ที่มีอยู่แล้วบนเซิร์ฟเวอร์ลงมาทำงานต่อ',
+                tags: ['clone', 'download', 'คัดลอก']
+            },
+            {
+                category: 'basic',
+                cmd: 'git status',
+                desc: 'เช็กสถานะปัจจุบันของไฟล์ในโปรเจกต์',
+                details: 'แสดงไฟล์ที่มีการแก้ไข, ไฟล์ที่ยังไม่ได้ติดตาม (Untracked) หรือไฟล์ที่พร้อม Commit',
+                tags: ['status', 'check', 'สถานะ']
+            },
+            {
+                category: 'basic',
+                cmd: 'git add .',
+                desc: 'นำไฟล์ที่ถูกแก้ไขทั้งหมดเข้าสู่ Staging Area',
+                details: 'เตรียมพร้อมไฟล์ทั้งหมดเพื่อรอการบันทึก (Commit) สามารถระบุชื่อไฟล์เฉพาะแทนจุดได้',
+                tags: ['add', 'stage', 'เพิ่มไฟล์']
+            },
+            {
+                category: 'basic',
+                cmd: 'git commit -m "ข้อความ"',
+                desc: 'บันทึกประวัติความเปลี่ยนแปลงของโค้ดลงใน Repository local',
+                details: 'ควรกำหนด message ให้กระชับและสื่อความหมายถึงสิ่งที่ปรับปรุง',
+                tags: ['commit', 'save', 'บันทึก']
+            },
+
+            // Teamwork & Branching
+            {
+                category: 'teamwork',
+                cmd: 'git branch',
+                desc: 'ดูรายการ Branch ทั้งหมดในเครื่อง',
+                details: ' Branch ปัจจุบันที่กำลังใช้งานอยู่จะมีเครื่องหมาย * แสดงอยู่ด้านหน้า',
+                tags: ['branch', 'list', 'เช็กสาขา']
+            },
+            {
+                category: 'teamwork',
+                cmd: 'git checkout -b <branch-name>',
+                desc: 'สร้าง Branch ใหม่ และสลับไปใช้งานทันที',
+                details: 'เป็นวิธีมาตรฐานที่ใช้แยกทำงานฟีเจอร์ใหม่ ไม่ให้กระทบกับ Branch หลัก',
+                tags: ['branch', 'create', 'switch', 'สร้างแบรนช์']
+            },
+            {
+                category: 'teamwork',
+                cmd: 'git checkout <branch-name>',
+                desc: 'สลับไปยัง Branch ที่ระบุ',
+                details: 'ใช้ย้ายการทำงานไปยัง Branch อื่นที่มีอยู่แล้ว',
+                tags: ['checkout', 'switch', 'สลับแบรนช์']
+            },
+            {
+                category: 'teamwork',
+                cmd: 'git pull origin <branch-name>',
+                desc: 'ดึงโค้ดล่าสุดจาก GitHub มาอัปเดตใส่ Branch ในเครื่อง',
+                details: 'ควรรันคำสั่งนี้เสมอเพื่ออัปเดตโค้ดของเพื่อนร่วมทีมลงเครื่องตัวเองก่อนเริ่มงาน',
+                tags: ['pull', 'update', 'fetch', 'ดึงโค้ด']
+            },
+            {
+                category: 'teamwork',
+                cmd: 'git push origin <branch-name>',
+                desc: 'ส่ง Branch และ Commit ในเครื่องขึ้นไปยัง GitHub',
+                details: 'ทำให้ผู้อื่นในทีมเห็นโค้ดล่าสุดที่คุณ Push ขึ้นไป',
+                tags: ['push', 'upload', 'ส่งโค้ด']
+            },
+
+            // Conflict Resolution
+            {
+                category: 'conflict',
+                cmd: 'git merge <branch-name>',
+                desc: 'รวมโค้ดจาก Branch อื่นเข้ามายัง Branch ปัจจุบัน',
+                details: 'หากบรรทัดเดียวกันมีการแก้ไขชนกัน จะเกิด Merge Conflict ที่ต้องเข้าไปเลือกเก็บโค้ดด้วยตัวเอง',
+                tags: ['merge', 'combine', 'รวมโค้ด']
+            },
+            {
+                category: 'conflict',
+                cmd: 'git status (ขณะเจอ Conflict)',
+                desc: 'ตรวจสอบว่าไฟล์ใดบ้างที่เกิด Conflict ชนกันอยู่',
+                details: 'ไฟล์ที่มีปัญหาจะขึ้นสถานะ "both modified" ให้เข้าไปเปิดแก้ไฟล์เหล่านั้น',
+                tags: ['conflict', 'check', 'ชนกัน']
+            },
+            {
+                category: 'conflict',
+                cmd: 'git merge --abort',
+                desc: 'ยกเลิกกระบวนการ Merge ทั้งหมด และย้อนกลับไปก่อนทำ Merge',
+                details: 'ใช้ในกรณีที่เกิด Conflict แล้วต้องการยกเลิกการรวมโค้ดชั่วคราวเพื่อไปตั้งหลักใหม่',
+                tags: ['merge', 'abort', 'cancel', 'ยกเลิกการรวม']
+            },
+
+            // Undo & Rollback
+            {
+                category: 'undo',
+                cmd: 'git log --oneline',
+                desc: 'ดูประวัติการ Commit แบบสั้นกระชับ 1 บรรทัดต่อ 1 Commit',
+                details: 'ใช้หา Commit Hash (รหัสอ้างอิง) เพื่อนำไปย้อนกลับเวอร์ชัน',
+                tags: ['log', 'history', 'ประวัติ']
+            },
+            {
+                category: 'undo',
+                cmd: 'git checkout -- <file-name>',
+                desc: 'ยกเลิกการแก้ไขในไฟล์ และดึงเวอร์ชันล่าสุดที่ Commit ไว้กลับมา',
+                details: 'ใช้เมื่อพิมพ์โค้ดเละเทะในไฟล์แต่ยังไม่ได้กด git add',
+                tags: ['undo', 'restore', 'ยกเลิกการแก้']
+            },
+            {
+                category: 'undo',
+                cmd: 'git reset --soft HEAD~1',
+                desc: 'ย้อนกลับ 1 Commit โดยที่โค้ดที่แก้ไว้ยังอยู่ไม่หายไป',
+                details: 'เหมาะกับกรณีที่เผลอ Commit ไปแล้ว แต่อยากแก้ Message หรือเพิ่มไฟล์เข้าไปใหม่',
+                tags: ['reset', 'soft', 'ย้อนคอมมิต']
+            },
+            {
+                category: 'undo',
+                cmd: 'git reset --hard HEAD~1',
+                desc: 'ย้อนกลับ 1 Commit และลบโค้ดทั้งหมดที่แก้ใน Commit นั้นทิ้ง!',
+                details: '⚠️ ควรใช้ด้วยความระมัดระวัง เพราะงานที่เขียนเพิ่มใน Commit นั้นจะหายสาบสูญทันที',
+                tags: ['reset', 'hard', 'ลบงานย้อนหลัง']
+            },
+            {
+                category: 'undo',
+                cmd: 'git revert <commit-hash>',
+                desc: 'สร้าง Commit ใหม่ที่มีผลในการยกเลิก Commit เดิม (ปลอดภัยสุดสำหรับทีม)',
+                details: 'ใช้เมื่อโค้ดที่พังถูก Push ขึ้น GitHub ไปแล้ว วิธีนี้จะไม่ทำลายประวัติการ Commit ของเพื่อนในทีม',
+                tags: ['revert', 'safe-undo', 'ย้อนปลอดภัย']
+            }
+        ];
+
+        // Render Cards Function
+        function renderCards(filterCat = 'all', searchQuery = '') {
+            const grid = document.getElementById('cardsGrid');
+            const noResults = document.getElementById('noResults');
+            grid.innerHTML = '';
+
+            const filtered = commands.filter(item => {
+                const matchCat = filterCat === 'all' || item.category === filterCat;
+                const matchSearch = item.cmd.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    item.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    item.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                filtered.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-cream-100/90 border border-cream-300 rounded-2xl p-5 card-hover flex flex-col justify-between shadow-sm';
+                    
+                    let categoryBadge = '';
+                    switch(item.category) {
+                        case 'basic': categoryBadge = 'bg-cream-200 text-cream-900'; break;
+                        case 'teamwork': categoryBadge = 'bg-terracotta-100 text-terracotta-700'; break;
+                        case 'conflict': categoryBadge = 'bg-amber-100 text-amber-800'; break;
+                        case 'undo': categoryBadge = 'bg-rose-100 text-rose-800'; break;
+                    }
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="text-xs font-medium px-2.5 py-1 rounded-md ${categoryBadge} uppercase tracking-wider">
+                                    ${item.category}
+                                </span>
+                                <button onclick="copyToClipboard('${item.cmd}')" class="text-cream-800/50 hover:text-terracotta-500 transition p-1" title="คัดลอกคำสั่ง">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="bg-cream-900 text-cream-50 p-3 rounded-xl font-mono text-sm mb-3 flex items-center justify-between group cursor-pointer" onclick="copyToClipboard('${item.cmd}')">
+                                <span class="overflow-x-auto select-all">${item.cmd}</span>
+                                <i data-lucide="corner-down-left" class="w-4 h-4 opacity-0 group-hover:opacity-100 text-terracotta-400 transition"></i>
+                            </div>
+                            <h3 class="font-semibold text-cream-900 text-base mb-1">${item.desc}</h3>
+                            <p class="text-cream-800/80 text-xs leading-relaxed">${item.details}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                lucide.createIcons();
+            }
+        }
+
+        // Copy to Clipboard Toast
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                document.getElementById('toastText').innerText = `คัดลอก "${text}" แล้ว`;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 2000);
+            });
+        }
+
+        // Event Listeners for Filters
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+
+            // Search
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const activeCat = document.querySelector('.cat-btn.bg-terracotta-500').getAttribute('data-cat');
+                renderCards(activeCat, e.target.value);
+            });
+
+            // Category Tabs
+            const catBtns = document.querySelectorAll('.cat-btn');
+            catBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    catBtns.forEach(b => {
+                        b.classList.remove('bg-terracotta-500', 'text-white');
+                        b.classList.add('bg-cream-50', 'text-cream-800');
+                    });
+                    btn.classList.remove('bg-cream-50', 'text-cream-800');
+                    btn.classList.add('bg-terracotta-500', 'text-white');
+
+                    const cat = btn.getAttribute('data-cat');
+                    renderCards(cat, searchInput.value);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
