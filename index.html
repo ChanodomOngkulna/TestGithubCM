@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git Command Cheat Sheet & Guide</title>
+    <title>Git Command Cheatsheet & Teamwork Guide</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -11,32 +11,64 @@
     <!-- Google Fonts: Kanit & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
+                screens: {
+                    'xs': '375px',
+                    'sm': '640px',
+                    'md': '768px',
+                    'lg': '1024px',
+                    'xl': '1280px',
+                    '2xl': '1536px',
+                },
                 extend: {
                     colors: {
                         cream: {
-                            50: '#FAF7F2',
-                            100: '#F3EDE2',
-                            200: '#E8DCB8',
-                            300: '#DDD0B3',
-                            800: '#4A3E3D',
-                            900: '#2C2221',
+                            50: '#FDFBF7',
+                            100: '#F5EFE6',
+                            200: '#E8DFD5',
+                            300: '#D6C7B8',
+                            400: '#BEA895',
+                            700: '#736154',
+                            800: '#5C4B40',
+                            900: '#3A2E26',
                         },
                         terracotta: {
-                            400: '#E07A5F',
+                            50: '#FDF5F2',
+                            100: '#FCEBE5',
+                            200: '#F7D4C8',
+                            400: '#E68A6B',
                             500: '#D96B43',
-                            600: '#C45731',
-                            700: '#A04222',
+                            600: '#C85A32',
+                            700: '#A34220',
                         },
-                        sand: '#E6D5C3',
+                        darkcode: '#2B2420',
                     },
                     fontFamily: {
                         sans: ['Kanit', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'float-reverse': 'floatRev 10s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '50%': { transform: 'translate(30px, -20px) scale(1.05)' },
+                        },
+                        floatRev: {
+                            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '50%': { transform: 'translate(-25px, 25px) scale(0.95)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4' },
+                            '50%': { opacity: '0.7' },
+                        }
                     }
                 }
             }
@@ -44,278 +76,473 @@
     </script>
     <style>
         body {
-            background-color: #FAF7F2;
-            color: #2C2221;
+            background-color: #FDFBF7;
+            color: #5C4B40;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(245, 239, 230, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .card-hover:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px -10px rgba(217, 107, 67, 0.15);
+            box-shadow: 0 16px 32px -8px rgba(217, 107, 67, 0.12);
         }
-        /* Custom scrollbar */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #F3EDE2;
+            background: #F5EFE6;
         }
         ::-webkit-scrollbar-thumb {
-            background: #DDD0B3;
-            border-radius: 4px;
+            background: #D6C7B8;
+            border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #D96B43;
         }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-terracotta-500 selection:text-white">
+<body class="font-sans antialiased min-h-screen flex flex-col relative selection:bg-terracotta-500 selection:text-white">
 
-    <!-- Header Section -->
-    <header class="bg-cream-100 border-b border-cream-200 sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-terracotta-500 text-white rounded-xl shadow-md">
-                        <i data-lucide="git-branch" class="w-7 h-7"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-cream-900 leading-tight">Git Command Cheatsheet</h1>
-                        <p class="text-sm text-cream-800 opacity-80">คู่มือรวมคำสั่ง Git สำหรับการทำงานร่วมกัน การแก้ Conflict และย้อนเวอร์ชัน</p>
-                    </div>
+    <!-- Background Ambient Animated Blobs -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-24 -left-20 w-72 h-72 sm:w-96 sm:h-96 bg-terracotta-200/40 rounded-full blur-3xl animate-float-slow"></div>
+        <div class="absolute top-1/3 -right-20 w-80 h-80 sm:w-[30rem] sm:h-[30rem] bg-cream-300/40 rounded-full blur-3xl animate-float-reverse"></div>
+        <div class="absolute bottom-10 left-10 w-64 h-64 sm:w-80 sm:h-80 bg-terracotta-100/50 rounded-full blur-3xl animate-pulse-glow"></div>
+    </div>
+
+    <!-- Header & Sticky Navbar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-cream-200/80 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-3.5 gap-3.5">
+                
+                <!-- Brand Title -->
+                <div class="flex items-center justify-between">
+                    <a href="#" class="flex items-center gap-3 group">
+                        <div class="p-2.5 bg-gradient-to-br from-terracotta-500 to-terracotta-600 text-white rounded-xl shadow-md shadow-terracotta-500/20 group-hover:scale-105 transition-transform">
+                            <i data-lucide="git-branch" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-xl sm:text-2xl font-bold text-cream-900 tracking-tight leading-none">Git Reference</h1>
+                                <span class="text-[10px] font-semibold bg-terracotta-100 text-terracotta-700 px-2 py-0.5 rounded-full border border-terracotta-200">v2.0</span>
+                            </div>
+                            <p class="text-xs text-cream-700 font-normal mt-0.5">คู่มือรวมคำสั่งและการแก้ปัญหา Git สำหรับทีม</p>
+                        </div>
+                    </a>
+
+                    <!-- Mobile Search Toggle Button (visible on small screens) -->
+                    <button id="mobileSearchToggle" class="md:hidden p-2 text-cream-800 hover:text-terracotta-600 rounded-lg bg-cream-100 border border-cream-200">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </button>
                 </div>
 
-                <!-- Search Input -->
-                <div class="relative min-w-[280px]">
-                    <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-cream-800/50"></i>
-                    <input type="text" id="searchInput" placeholder="ค้นหาคำสั่ง เช่น push, merge, revert..." 
-                           class="w-full pl-10 pr-4 py-2 bg-cream-50 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-terracotta-500 text-sm placeholder:text-cream-800/40 transition">
+                <!-- Search Input Box -->
+                <div id="searchContainer" class="hidden md:block w-full md:w-80 transition-all">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-cream-700/60"></i>
+                        <input type="text" id="searchInput" placeholder="ค้นหาคำสั่ง เช่น push, merge, revert..." 
+                               class="w-full pl-10 pr-9 py-2 bg-cream-50/90 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-terracotta-500/50 focus:border-terracotta-500 text-sm text-cream-900 placeholder:text-cream-700/50 transition shadow-inner">
+                        <button id="clearSearch" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-cream-700/60 hover:text-cream-900">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Categories Tabs -->
-            <div class="flex gap-2 mt-4 overflow-x-auto pb-1 text-sm no-scrollbar" id="categoryFilter">
-                <button data-cat="all" class="cat-btn px-4 py-1.5 rounded-lg bg-terracotta-500 text-white font-medium transition shadow-sm">ทั้งหมด</button>
-                <button data-cat="basic" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">คำสั่งพื้นฐาน</button>
-                <button data-cat="teamwork" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">การทำงานเป็นทีม</button>
-                <button data-cat="conflict" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">การแก้ Conflict</button>
-                <button data-cat="undo" class="cat-btn px-4 py-1.5 rounded-lg bg-cream-50 text-cream-800 hover:bg-cream-200 font-medium transition">การย้อนเวอร์ชัน</button>
+            <!-- Scrollable Filter Chips -->
+            <div class="flex gap-1.5 sm:gap-2 pb-3 overflow-x-auto hide-scrollbar text-xs sm:text-sm font-medium border-t border-cream-200/50 pt-2.5" id="categoryFilter">
+                <button data-cat="all" class="cat-btn shrink-0 px-3.5 py-1.5 rounded-lg bg-terracotta-500 text-white font-medium transition shadow-sm flex items-center gap-1.5">
+                    <i data-lucide="layers" class="w-3.5 h-3.5"></i> ทั้งหมด
+                </button>
+                <button data-cat="basic" class="cat-btn shrink-0 px-3.5 py-1.5 rounded-lg bg-cream-100 text-cream-800 hover:bg-cream-200 transition flex items-center gap-1.5">
+                    <i data-lucide="play" class="w-3.5 h-3.5 text-terracotta-500"></i> โฟลว์พื้นฐาน
+                </button>
+                <button data-cat="teamwork" class="cat-btn shrink-0 px-3.5 py-1.5 rounded-lg bg-cream-100 text-cream-800 hover:bg-cream-200 transition flex items-center gap-1.5">
+                    <i data-lucide="users" class="w-3.5 h-3.5 text-terracotta-500"></i> ทำงานร่วมกัน & Branch
+                </button>
+                <button data-cat="conflict" class="cat-btn shrink-0 px-3.5 py-1.5 rounded-lg bg-cream-100 text-cream-800 hover:bg-cream-200 transition flex items-center gap-1.5">
+                    <i data-lucide="git-merge" class="w-3.5 h-3.5 text-terracotta-500"></i> แก้ Merge Conflict
+                </button>
+                <button data-cat="undo" class="cat-btn shrink-0 px-3.5 py-1.5 rounded-lg bg-cream-100 text-cream-800 hover:bg-cream-200 transition flex items-center gap-1.5">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-terracotta-500"></i> ย้อนเวอร์ชัน & Undo
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Grid -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Interactive Workflow Highlight -->
-        <section class="mb-10 bg-gradient-to-br from-cream-100 to-cream-200 rounded-2xl p-6 border border-cream-300 shadow-sm">
-            <h2 class="text-lg font-semibold text-cream-900 mb-4 flex items-center gap-2">
-                <i data-lucide="users" class="w-5 h-5 text-terracotta-500"></i>
-                Workflow การทำงานร่วมกันหลายคนใน 1 Repo (แนะนำ)
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
-                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 1</span>
-                    <h3 class="font-medium text-cream-900 mb-1">ดึงโค้ดล่าสุดจาก main</h3>
-                    <p class="text-cream-800/80 text-xs">ก่อนเริ่มงานใหม่ทุกครั้งเพื่อป้องกันโค้ดล้าสมัย</p>
-                    <code class="block mt-2 text-xs bg-cream-100 p-1.5 rounded font-mono text-terracotta-600">git pull origin main</code>
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 z-10 relative space-y-8">
+
+        <!-- Hero Section & Teamwork Flow -->
+        <section class="bg-gradient-to-br from-cream-100/90 via-cream-100/60 to-terracotta-50/50 rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-cream-200/90 shadow-sm relative overflow-hidden backdrop-blur-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream-200/80 text-cream-800 text-xs font-medium mb-3">
+                        <i data-lucide="eye" class="w-3.5 h-3.5 text-terracotta-600"></i>
+                        <span>ดีไซน์ธีมสีถนอมสายตา (Warm Eyecare Palette)</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-cream-900 tracking-tight leading-snug">
+                        Workflow การทำงาน 1 Repository ร่วมกันหลายคน
+                    </h2>
+                    <p class="text-cream-700 text-xs sm:text-sm mt-1.5 leading-relaxed">
+                        ป้องกันโค้ดพังด้วยกฎทอง: <span class="font-semibold text-terracotta-600">"ไม่ Push งานเข้า main โดยตรง"</span> ให้สร้าง Branch แยกเสมอแล้วส่ง Pull Request ให้ทีมรีวิว
+                    </p>
                 </div>
-                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
-                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 2</span>
-                    <h3 class="font-medium text-cream-900 mb-1">สร้าง Branch ใหม่</h3>
-                    <p class="text-cream-800/80 text-xs">แยกทำเฉพาะฟีเจอร์ของตนเอง ไม่แก้บน main ตรงๆ</p>
-                    <code class="block mt-2 text-xs bg-cream-100 p-1.5 rounded font-mono text-terracotta-600">git checkout -b my-feature</code>
+            </div>
+
+            <!-- Workflow Steps Responsive Grid -->
+            <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
+                <!-- Step 1 -->
+                <div class="bg-cream-50/90 p-4 rounded-xl border border-cream-200 flex flex-col justify-between shadow-xs hover:border-terracotta-400/50 transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700">STEP 1</span>
+                            <i data-lucide="download-cloud" class="w-4 h-4 text-cream-400"></i>
+                        </div>
+                        <h3 class="font-semibold text-cream-900 text-sm mb-1">อัปเดตโค้ดล่าสุด</h3>
+                        <p class="text-cream-700 text-xs leading-normal">สลับไป main แล้ว pull โค้ดล่าสุดเพื่อนลงมาเสมอ</p>
+                    </div>
+                    <code class="block mt-3 text-[11px] bg-darkcode text-cream-100 p-2 rounded-lg font-mono overflow-x-auto select-all">git pull origin main</code>
                 </div>
-                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
-                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 3</span>
-                    <h3 class="font-medium text-cream-900 mb-1">Commit & Push งาน</h3>
-                    <p class="text-cream-800/80 text-xs">บันทึกและส่ง Branch ขึ้น GitHub เพื่อขอรวมโค้ด</p>
-                    <code class="block mt-2 text-xs bg-cream-100 p-1.5 rounded font-mono text-terracotta-600">git push -u origin my-feature</code>
+
+                <!-- Step 2 -->
+                <div class="bg-cream-50/90 p-4 rounded-xl border border-cream-200 flex flex-col justify-between shadow-xs hover:border-terracotta-400/50 transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700">STEP 2</span>
+                            <i data-lucide="git-fork" class="w-4 h-4 text-cream-400"></i>
+                        </div>
+                        <h3 class="font-semibold text-cream-900 text-sm mb-1">สร้าง Branch ของคุณ</h3>
+                        <p class="text-cream-700 text-xs leading-normal">แตก Branch ย่อยเพื่อพัฒนาฟีเจอร์ของตนเอง</p>
+                    </div>
+                    <code class="block mt-3 text-[11px] bg-darkcode text-cream-100 p-2 rounded-lg font-mono overflow-x-auto select-all">git checkout -b feature/name</code>
                 </div>
-                <div class="bg-cream-50 p-4 rounded-xl border border-cream-300/60">
-                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700 font-semibold mb-2 inline-block">Step 4</span>
-                    <h3 class="font-medium text-cream-900 mb-1">ทำ Pull Request (PR)</h3>
-                    <p class="text-cream-800/80 text-xs">ส่งคำขอ Merge ให้เพื่อนช่วยตรวจโค้ดก่อนรวมเข้า main</p>
-                    <span class="block mt-2 text-xs text-terracotta-600 font-semibold">ทำผ่านหน้าเว็บ GitHub</span>
+
+                <!-- Step 3 -->
+                <div class="bg-cream-50/90 p-4 rounded-xl border border-cream-200 flex flex-col justify-between shadow-xs hover:border-terracotta-400/50 transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700">STEP 3</span>
+                            <i data-lucide="upload-cloud" class="w-4 h-4 text-cream-400"></i>
+                        </div>
+                        <h3 class="font-semibold text-cream-900 text-sm mb-1">Push ขึ้น GitHub</h3>
+                        <p class="text-cream-700 text-xs leading-normal">Commit งานในเครื่องแล้วส่งขึ้นระบบ</p>
+                    </div>
+                    <code class="block mt-3 text-[11px] bg-darkcode text-cream-100 p-2 rounded-lg font-mono overflow-x-auto select-all">git push -u origin feature/name</code>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-cream-50/90 p-4 rounded-xl border border-cream-200 flex flex-col justify-between shadow-xs hover:border-terracotta-400/50 transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-700">STEP 4</span>
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-cream-400"></i>
+                        </div>
+                        <h3 class="font-semibold text-cream-900 text-sm mb-1">สร้าง Pull Request</h3>
+                        <p class="text-cream-700 text-xs leading-normal">ส่งคำขอเข้า GitHub เพื่อตรวจและ Merge เข้า main</p>
+                    </div>
+                    <span class="block mt-3 text-center text-xs text-terracotta-600 bg-terracotta-50 border border-terracotta-200 p-1.5 rounded-lg font-medium">เปิดหน้าเว็บ GitHub.com</span>
                 </div>
             </div>
         </section>
 
-        <!-- Command Cards Grid -->
-        <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Cards will be dynamically populated/filtered by JS -->
-        </div>
+        <!-- Dynamic Commands Cards Grid -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg sm:text-xl font-bold text-cream-900 flex items-center gap-2">
+                    <i data-lucide="terminal" class="w-5 h-5 text-terracotta-500"></i>
+                    <span id="sectionTitle">คลังคำสั่ง Git ทั้งหมด</span>
+                </h3>
+                <span id="commandCount" class="text-xs text-cream-700 font-mono bg-cream-200 px-2.5 py-1 rounded-full">18 คำสั่ง</span>
+            </div>
 
-        <div id="noResults" class="hidden text-center py-12">
-            <i data-lucide="search-x" class="w-12 h-12 text-cream-800/40 mx-auto mb-3"></i>
-            <p class="text-cream-800 text-lg font-medium">ไม่พบคำสั่งที่ค้นหา</p>
-            <p class="text-cream-800/60 text-sm">ลองค้นหาด้วยคำอื่นๆ เช่น branch, log, reset</p>
-        </div>
+            <!-- Responsive Grid with fluid columns -->
+            <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Javascript will inject responsive cards here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="noResults" class="hidden text-center py-16 bg-cream-100/50 rounded-2xl border border-dashed border-cream-300">
+                <i data-lucide="search-x" class="w-12 h-12 text-cream-400 mx-auto mb-3"></i>
+                <h4 class="text-cream-900 font-semibold text-base">ไม่พบคำสั่งที่ตรงกับคำค้นหา</h4>
+                <p class="text-cream-700 text-xs sm:text-sm mt-1">ลองพิมพ์คำอื่น เช่น "merge", "reset", "revert" หรือกดล้างการค้นหา</p>
+                <button onclick="resetSearch()" class="mt-4 px-4 py-2 bg-terracotta-500 text-white rounded-xl text-xs font-medium hover:bg-terracotta-600 transition">
+                    ล้างการค้นหาทั้งหมด
+                </button>
+            </div>
+        </section>
+
+        <!-- Special Section: Merge Conflict Code Visualizer -->
+        <section id="conflictGuide" class="bg-cream-100/90 rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-cream-300 shadow-sm space-y-4 backdrop-blur-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-amber-500 text-white rounded-xl">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-cream-900">การอ่านสัญลักษณ์ในไฟล์เมื่อเกิด Merge Conflict</h3>
+                        <p class="text-xs sm:text-sm text-cream-700"> VS Code จะไฮไลต์ส่วนที่โค้ดชนกันให้เห็นชัดเจนดังตัวอย่างนี้:</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Conflict Visualizer Code Block -->
+            <div class="bg-darkcode text-cream-100 rounded-xl p-4 font-mono text-xs sm:text-sm overflow-x-auto border border-cream-800 shadow-inner leading-relaxed">
+                <div class="text-amber-400 font-semibold select-none">// ส่วนโค้ดในเครื่องของคุณ (Current Change)</div>
+                <div class="bg-terracotta-900/40 border-l-4 border-terracotta-500 px-3 py-1 my-1">
+                    <span class="text-terracotta-400 font-bold">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br>
+                    <span class="text-cream-100">const apiUrl = "https://api.myproject.com/v1";</span>
+                </div>
+                
+                <div class="text-cream-400 select-none font-bold py-1 my-1 opacity-70">
+                    ======= <span class="font-sans text-xs font-normal text-cream-400 opacity-80">(เส้นแบ่งกลางระหว่างสองเวอร์ชัน)</span>
+                </div>
+
+                <div class="text-emerald-400 font-semibold select-none">// ส่วนโค้ดของเพื่อนที่ถูก push ขึ้นมาล่าสุด (Incoming Change)</div>
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-500 px-3 py-1 my-1">
+                    <span class="text-cream-100">const apiUrl = "https://api-v2.myproject.com/v2";</span><br>
+                    <span class="text-emerald-400 font-bold">&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-2">
+                <div class="bg-cream-50 p-3 rounded-xl border border-cream-200">
+                    <span class="font-semibold text-terracotta-600 block mb-1">1. ตัดสินใจเลือกรักษาโค้ด</span>
+                    เลือกกดปุ่ม Accept Current (ของตนเอง) หรือ Accept Incoming (ของเพื่อน) หรือแก้ผสมกัน
+                </div>
+                <div class="bg-cream-50 p-3 rounded-xl border border-cream-200">
+                    <span class="font-semibold text-terracotta-600 block mb-1">2. ลบสัญลักษณ์ส่วนเกิน</span>
+                    ลบบรรทัดเครื่องหมาย <code class="text-terracotta-600">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code class="text-terracotta-600">=======</code>, <code class="text-terracotta-600">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> ออกให้หมด
+                </div>
+                <div class="bg-cream-50 p-3 rounded-xl border border-cream-200">
+                    <span class="font-semibold text-terracotta-600 block mb-1">3. Commit จบงาน</span>
+                    เซฟไฟล์ แล้วใช้คำสั่ง <code class="text-terracotta-600">git add .</code> ตามด้วย <code class="text-terracotta-600">git commit</code> เพื่อจบกระบวนการ
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-cream-900 text-cream-50 px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-        <i data-lucide="check-circle" class="w-5 h-5 text-terracotta-400"></i>
-        <span id="toastText" class="text-sm font-medium">คัดลอกคำสั่งแล้ว!</span>
+    <!-- Floating Copy Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-cream-900 text-cream-50 px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 z-50 border border-cream-700">
+        <div class="p-1.5 bg-terracotta-500 text-white rounded-lg">
+            <i data-lucide="check" class="w-4 h-4"></i>
+        </div>
+        <div>
+            <p id="toastText" class="text-xs sm:text-sm font-medium">คัดลอกคำสั่งเรียบร้อยแล้ว!</p>
+            <p class="text-[10px] text-cream-300">นำไปวางใน Terminal หรือ Command Prompt ได้เลย</p>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-cream-100 border-t border-cream-200 mt-12 py-6 text-center text-sm text-cream-800/70">
-        <p>Git Reference Guide — พัฒนาขึ้นด้วย HTML & Tailwind CSS ธีมถนอมสายตา</p>
+    <!-- Responsive Footer -->
+    <footer class="bg-cream-100/80 border-t border-cream-200 mt-12 py-6 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs sm:text-sm text-cream-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>© Git Command Reference & Teamwork Guide — ออกแบบให้เข้ากับทุกขนาดหน้าจอ</p>
+            <div class="flex items-center gap-4 text-xs font-medium">
+                <a href="#top" class="hover:text-terracotta-600 transition flex items-center gap-1">
+                    <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i> กลับด้านบน
+                </a>
+            </div>
+        </div>
     </footer>
 
+    <!-- JavaScript Data and Interaction Handler -->
     <script>
-        // Data Structure for Git Commands
-        const commands = [
-            // Basic
+        // Database of Git Commands with detailed descriptions
+        const gitCommands = [
+            // Basic Category
             {
                 category: 'basic',
                 cmd: 'git init',
-                desc: 'เริ่มต้นสร้าง Git Repository ในโฟลเดอร์ปัจจุบัน',
-                details: 'ใช้เพียงครั้งเดียวเมื่อต้องการเริ่มติดตามประวัติของโปรเจกต์ใหม่',
-                tags: ['init', 'setup', 'เริ่มโปรเจกต์']
+                desc: 'เริ่มต้นสร้าง Git Repository',
+                details: 'สร้างโฟลเดอร์เก็บประวัติ .git ในโปรเจกต์ใหม่ รันคำสั่งนี้เพียงครั้งเดียวเมื่อเริ่มโปรเจกต์',
+                tags: ['init', 'setup', 'เริ่มโปรเจกต์', 'สร้าง']
             },
             {
                 category: 'basic',
-                cmd: 'git clone <url>',
-                desc: 'ดาวน์โหลด Repository จาก GitHub ลงมาที่เครื่องคอมพิวเตอร์',
-                details: 'ใช้เมื่อต้องการคัดลอกโปรเจกต์ที่มีอยู่แล้วบนเซิร์ฟเวอร์ลงมาทำงานต่อ',
-                tags: ['clone', 'download', 'คัดลอก']
+                cmd: 'git clone <repo-url>',
+                desc: 'ดาวน์โหลด Repository จาก GitHub ลงเครื่อง',
+                details: 'คัดลอกโฟลเดอร์โปรเจกต์จากคลาวด์ลงมาทำงานที่เครื่อง Local คอมพิวเตอร์ของคุณ',
+                tags: ['clone', 'download', 'คัดลอก', 'ก๊อป']
             },
             {
                 category: 'basic',
                 cmd: 'git status',
-                desc: 'เช็กสถานะปัจจุบันของไฟล์ในโปรเจกต์',
-                details: 'แสดงไฟล์ที่มีการแก้ไข, ไฟล์ที่ยังไม่ได้ติดตาม (Untracked) หรือไฟล์ที่พร้อม Commit',
-                tags: ['status', 'check', 'สถานะ']
+                desc: 'เช็กสถานะการเปลี่ยนแปลงในโปรเจกต์',
+                details: 'แสดงรายการไฟล์ที่มีการแก้ไข, ไฟล์ที่รอ add หรือไฟล์ที่ยังไม่ถูกติดตาม',
+                tags: ['status', 'check', 'สถานะ', 'ตรวจสอบ']
             },
             {
                 category: 'basic',
                 cmd: 'git add .',
-                desc: 'นำไฟล์ที่ถูกแก้ไขทั้งหมดเข้าสู่ Staging Area',
-                details: 'เตรียมพร้อมไฟล์ทั้งหมดเพื่อรอการบันทึก (Commit) สามารถระบุชื่อไฟล์เฉพาะแทนจุดได้',
-                tags: ['add', 'stage', 'เพิ่มไฟล์']
+                desc: 'เตรียมไฟล์ทั้งหมดเข้าสู่ Staging Area',
+                details: 'รวบรวมไฟล์ที่แก้ไขทั้งหมดเพื่อเตรียมพร้อมสำหรับ Commit (ใช้ git add <filename> หากต้องการระบุไฟล์)',
+                tags: ['add', 'stage', 'เพิ่มไฟล์', 'เตรียม']
             },
             {
                 category: 'basic',
-                cmd: 'git commit -m "ข้อความ"',
-                desc: 'บันทึกประวัติความเปลี่ยนแปลงของโค้ดลงใน Repository local',
-                details: 'ควรกำหนด message ให้กระชับและสื่อความหมายถึงสิ่งที่ปรับปรุง',
-                tags: ['commit', 'save', 'บันทึก']
+                cmd: 'git commit -m "ข้อความอธิบาย"',
+                desc: 'บันทึกเวอร์ชันการแก้ไขลง Local',
+                details: 'บันทึก Snapshot ของโค้ดที่เตรียมไว้ ควรใส่ข้อความอธิบายความเปลี่ยนแปลงให้ชัดเจน',
+                tags: ['commit', 'save', 'บันทึก', 'คอมมิต']
+            },
+            {
+                category: 'basic',
+                cmd: 'git fetch',
+                desc: 'ดึงข้อมูลอัปเดตจาก Remote แต่ยังไม่ Merge',
+                details: 'ตรวจสอบการเปลี่ยนแปลงบน GitHub โดยยังไม่นำโค้ดมาทับงานในเครื่องตัวเอง',
+                tags: ['fetch', 'check', 'เช็กอัปเดต']
             },
 
-            // Teamwork & Branching
+            // Teamwork & Branching Category
             {
                 category: 'teamwork',
                 cmd: 'git branch',
-                desc: 'ดูรายการ Branch ทั้งหมดในเครื่อง',
-                details: ' Branch ปัจจุบันที่กำลังใช้งานอยู่จะมีเครื่องหมาย * แสดงอยู่ด้านหน้า',
-                tags: ['branch', 'list', 'เช็กสาขา']
+                desc: 'แสดงรายการ Branch ทั้งหมดในเครื่อง',
+                details: 'แสดงสาขาพัฒนาทั้งหมด Branch ปัจจุบันจะมีเครื่องหมาย * และสีไฮไลต์',
+                tags: ['branch', 'list', 'เช็กสาขา', 'แบรนช์']
             },
             {
                 category: 'teamwork',
                 cmd: 'git checkout -b <branch-name>',
-                desc: 'สร้าง Branch ใหม่ และสลับไปใช้งานทันที',
-                details: 'เป็นวิธีมาตรฐานที่ใช้แยกทำงานฟีเจอร์ใหม่ ไม่ให้กระทบกับ Branch หลัก',
-                tags: ['branch', 'create', 'switch', 'สร้างแบรนช์']
+                desc: 'สร้าง Branch ใหม่และสลับไปใช้ทันที',
+                details: 'สร้างสาขาแยกพัฒนาฟีเจอร์ใหม่ เช่น feature/login เพื่อไม่ให้กระทบโค้ดหลัก',
+                tags: ['branch', 'create', 'switch', 'สร้างแบรนช์', 'สลับ']
             },
             {
                 category: 'teamwork',
-                cmd: 'git checkout <branch-name>',
-                desc: 'สลับไปยัง Branch ที่ระบุ',
-                details: 'ใช้ย้ายการทำงานไปยัง Branch อื่นที่มีอยู่แล้ว',
-                tags: ['checkout', 'switch', 'สลับแบรนช์']
+                cmd: 'git switch <branch-name>',
+                desc: 'สลับไปยัง Branch ที่ต้องการ',
+                details: 'คำสั่งยุคใหม่ของ Git ที่ใช้สำหรับสลับ Branch (เข้าใจง่ายกว่า git checkout)',
+                tags: ['switch', 'checkout', 'สลับแบรนช์']
             },
             {
                 category: 'teamwork',
                 cmd: 'git pull origin <branch-name>',
-                desc: 'ดึงโค้ดล่าสุดจาก GitHub มาอัปเดตใส่ Branch ในเครื่อง',
-                details: 'ควรรันคำสั่งนี้เสมอเพื่ออัปเดตโค้ดของเพื่อนร่วมทีมลงเครื่องตัวเองก่อนเริ่มงาน',
-                tags: ['pull', 'update', 'fetch', 'ดึงโค้ด']
+                desc: 'ดึงโค้ดล่าสุดจาก GitHub มาอัปเดตใส่เครื่อง',
+                details: 'ดึงการแก้ไขของเพื่อนในทีมมาดัดแปลงรวมกับโค้ดในเครื่องของเรา',
+                tags: ['pull', 'update', 'ดึงโค้ด', 'อัปเดต']
             },
             {
                 category: 'teamwork',
                 cmd: 'git push origin <branch-name>',
-                desc: 'ส่ง Branch และ Commit ในเครื่องขึ้นไปยัง GitHub',
-                details: 'ทำให้ผู้อื่นในทีมเห็นโค้ดล่าสุดที่คุณ Push ขึ้นไป',
-                tags: ['push', 'upload', 'ส่งโค้ด']
+                desc: 'ส่ง Branch และ Commit ขึ้นบน GitHub',
+                details: 'อัปโหลดงานที่คุณทำเสร็จในเครื่องขึ้นคลาวด์เพื่อให้ทีมมองเห็นและตรวจรีวิว',
+                tags: ['push', 'upload', 'ส่งโค้ด', 'พุช']
+            },
+            {
+                category: 'teamwork',
+                cmd: 'git stash',
+                desc: 'ซ่อนงานที่กำลังพิมพ์ค้างไว้ชั่วคราว',
+                details: 'เก็บโค้ดที่ยังไม่พร้อม Commit เข้าสู่ Stash ชั่วคราวเพื่อดึงโค้ดด่วนหรือสลับ Branch',
+                tags: ['stash', 'save', 'ซ่อนงาน', 'ฝากโค้ด']
+            },
+            {
+                category: 'teamwork',
+                cmd: 'git stash pop',
+                desc: 'ดึงงานที่ซ่อนไว้ใน Stash กลับมาทำต่อ',
+                details: 'นำโค้ดที่ถูกซ่อนไว้ล่าสุดกลับคืนมาทำต่อในไฟล์งานปัจจุบัน',
+                tags: ['stash', 'pop', 'restore', 'เอางานคืน']
             },
 
-            // Conflict Resolution
+            // Conflict Category
             {
                 category: 'conflict',
                 cmd: 'git merge <branch-name>',
-                desc: 'รวมโค้ดจาก Branch อื่นเข้ามายัง Branch ปัจจุบัน',
-                details: 'หากบรรทัดเดียวกันมีการแก้ไขชนกัน จะเกิด Merge Conflict ที่ต้องเข้าไปเลือกเก็บโค้ดด้วยตัวเอง',
-                tags: ['merge', 'combine', 'รวมโค้ด']
-            },
-            {
-                category: 'conflict',
-                cmd: 'git status (ขณะเจอ Conflict)',
-                desc: 'ตรวจสอบว่าไฟล์ใดบ้างที่เกิด Conflict ชนกันอยู่',
-                details: 'ไฟล์ที่มีปัญหาจะขึ้นสถานะ "both modified" ให้เข้าไปเปิดแก้ไฟล์เหล่านั้น',
-                tags: ['conflict', 'check', 'ชนกัน']
+                desc: 'รวมโค้ดจาก Branch อื่นเข้า Branch ปัจจุบัน',
+                details: 'รวมการทำงานเข้าด้วยกัน หากแก้ไขบรรทัดเดียวกันจะเกิด Merge Conflict',
+                tags: ['merge', 'combine', 'รวมโค้ด', 'เมิร์จ']
             },
             {
                 category: 'conflict',
                 cmd: 'git merge --abort',
-                desc: 'ยกเลิกกระบวนการ Merge ทั้งหมด และย้อนกลับไปก่อนทำ Merge',
-                details: 'ใช้ในกรณีที่เกิด Conflict แล้วต้องการยกเลิกการรวมโค้ดชั่วคราวเพื่อไปตั้งหลักใหม่',
+                desc: 'ยกเลิกการ Merge ขณะเจอ Conflict',
+                details: 'ใช้ยกเลิกสถานะ Conflict และย้อนกลับไปจุดเดิมก่อนกดรวมโค้ดเพื่อตั้งหลักใหม่',
                 tags: ['merge', 'abort', 'cancel', 'ยกเลิกการรวม']
             },
 
-            // Undo & Rollback
+            // Undo & Rollback Category
             {
                 category: 'undo',
                 cmd: 'git log --oneline',
-                desc: 'ดูประวัติการ Commit แบบสั้นกระชับ 1 บรรทัดต่อ 1 Commit',
-                details: 'ใช้หา Commit Hash (รหัสอ้างอิง) เพื่อนำไปย้อนกลับเวอร์ชัน',
-                tags: ['log', 'history', 'ประวัติ']
+                desc: 'ดูประวัติ Commit แบบสั้น 1 บรรทัด',
+                details: 'แสดงรหัส Commit Hash (เช่น a1b2c3d) และข้อความ เพื่อนำรหัสไปใช้ในการย้อนเวอร์ชัน',
+                tags: ['log', 'history', 'ประวัติ', 'เช็กรหัส']
             },
             {
                 category: 'undo',
-                cmd: 'git checkout -- <file-name>',
-                desc: 'ยกเลิกการแก้ไขในไฟล์ และดึงเวอร์ชันล่าสุดที่ Commit ไว้กลับมา',
-                details: 'ใช้เมื่อพิมพ์โค้ดเละเทะในไฟล์แต่ยังไม่ได้กด git add',
-                tags: ['undo', 'restore', 'ยกเลิกการแก้']
+                cmd: 'git restore <file-name>',
+                desc: 'ยกเลิกการแก้ไขไฟล์ ย้อนกลับเวอร์ชันล่าสุด',
+                details: 'ลบโค้ดที่แก้ไขล่าสุดในไฟล์นั้นๆ ทิ้งไป ให้กลับไปเหมือนตอน Commit ครั้งล่าสุด',
+                tags: ['restore', 'undo', 'ยกเลิกการแก้', 'คืนค่า']
+            },
+            {
+                category: 'undo',
+                cmd: 'git commit --amend -m "ข้อความใหม่"',
+                desc: 'แก้ไข Message ของ Commit ล่าสุด',
+                details: 'ใช้เมื่อสะกดคำผิดใน Commit Message หรือต้องการรวมไฟล์ที่ลืม add เข้า Commit ล่าสุด',
+                tags: ['amend', 'edit', 'แก้คอมมิต']
             },
             {
                 category: 'undo',
                 cmd: 'git reset --soft HEAD~1',
-                desc: 'ย้อนกลับ 1 Commit โดยที่โค้ดที่แก้ไว้ยังอยู่ไม่หายไป',
-                details: 'เหมาะกับกรณีที่เผลอ Commit ไปแล้ว แต่อยากแก้ Message หรือเพิ่มไฟล์เข้าไปใหม่',
-                tags: ['reset', 'soft', 'ย้อนคอมมิต']
+                desc: 'ย้อนกลับ 1 Commit โดยไม่ลบโค้ดที่เขียนไว้',
+                details: 'ยกเลิกสถานะ Commit ล่าสุด แต่โค้ดในไฟล์ยังคงเดิม เหมาะกับต้องการแก้ message หรือไฟล์',
+                tags: ['reset', 'soft', 'ย้อนคอมมิต', 'โค้ดไม่หาย']
             },
             {
                 category: 'undo',
                 cmd: 'git reset --hard HEAD~1',
-                desc: 'ย้อนกลับ 1 Commit และลบโค้ดทั้งหมดที่แก้ใน Commit นั้นทิ้ง!',
-                details: '⚠️ ควรใช้ด้วยความระมัดระวัง เพราะงานที่เขียนเพิ่มใน Commit นั้นจะหายสาบสูญทันที',
-                tags: ['reset', 'hard', 'ลบงานย้อนหลัง']
+                desc: '⚠️ ย้อนกลับ 1 Commit และลบโค้ดทิ้งทั้งหมด!',
+                details: 'ลบทั้ง Commit และโค้ดทั้งหมดที่ทำเพิ่มเติมทิ้งอย่างถาวร (ควรระวังอย่างมาก)',
+                tags: ['reset', 'hard', 'ลบโค้ดทิ้ง', 'ย้อนถาวร']
             },
             {
                 category: 'undo',
                 cmd: 'git revert <commit-hash>',
-                desc: 'สร้าง Commit ใหม่ที่มีผลในการยกเลิก Commit เดิม (ปลอดภัยสุดสำหรับทีม)',
-                details: 'ใช้เมื่อโค้ดที่พังถูก Push ขึ้น GitHub ไปแล้ว วิธีนี้จะไม่ทำลายประวัติการ Commit ของเพื่อนในทีม',
-                tags: ['revert', 'safe-undo', 'ย้อนปลอดภัย']
+                desc: 'ย้อนกลับ Commit ที่ Push ไปแล้วอย่างปลอดภัย',
+                details: 'สร้าง Commit ใหม่เพื่อสลับยกเลิกการเปลี่ยนแปลงเดิม ปลอดภัยที่สุดสำหรับการทำงานเป็นทีม',
+                tags: ['revert', 'safe-undo', 'ย้อนปลอดภัย', 'ทีม']
             }
         ];
 
-        // Render Cards Function
-        function renderCards(filterCat = 'all', searchQuery = '') {
+        let currentCategory = 'all';
+        let currentSearchQuery = '';
+
+        // Render Card Function with Fluid Responsiveness
+        function renderCards() {
             const grid = document.getElementById('cardsGrid');
             const noResults = document.getElementById('noResults');
+            const countLabel = document.getElementById('commandCount');
             grid.innerHTML = '';
 
-            const filtered = commands.filter(item => {
-                const matchCat = filterCat === 'all' || item.category === filterCat;
-                const matchSearch = item.cmd.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                    item.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                    item.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+            const filtered = gitCommands.filter(item => {
+                const matchCat = currentCategory === 'all' || item.category === currentCategory;
+                const query = currentSearchQuery.toLowerCase().trim();
+                const matchSearch = query === '' || 
+                                    item.cmd.toLowerCase().includes(query) || 
+                                    item.desc.toLowerCase().includes(query) ||
+                                    item.details.toLowerCase().includes(query) ||
+                                    item.tags.some(t => t.toLowerCase().includes(query));
                 return matchCat && matchSearch;
             });
+
+            countLabel.textContent = `${filtered.length} คำสั่ง`;
 
             if (filtered.length === 0) {
                 noResults.classList.remove('hidden');
@@ -323,32 +550,55 @@
                 noResults.classList.add('hidden');
                 filtered.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'bg-cream-100/90 border border-cream-300 rounded-2xl p-5 card-hover flex flex-col justify-between shadow-sm';
+                    card.className = 'bg-cream-100/90 border border-cream-200/90 rounded-2xl p-4 sm:p-5 card-hover flex flex-col justify-between shadow-xs backdrop-blur-xs relative group';
                     
-                    let categoryBadge = '';
+                    let catBadgeClass = '';
+                    let catName = '';
                     switch(item.category) {
-                        case 'basic': categoryBadge = 'bg-cream-200 text-cream-900'; break;
-                        case 'teamwork': categoryBadge = 'bg-terracotta-100 text-terracotta-700'; break;
-                        case 'conflict': categoryBadge = 'bg-amber-100 text-amber-800'; break;
-                        case 'undo': categoryBadge = 'bg-rose-100 text-rose-800'; break;
+                        case 'basic': 
+                            catBadgeClass = 'bg-cream-200 text-cream-900 border-cream-300'; 
+                            catName = 'พื้นฐาน';
+                            break;
+                        case 'teamwork': 
+                            catBadgeClass = 'bg-terracotta-100 text-terracotta-700 border-terracotta-200'; 
+                            catName = 'ทีม & Branch';
+                            break;
+                        case 'conflict': 
+                            catBadgeClass = 'bg-amber-100 text-amber-800 border-amber-200'; 
+                            catName = 'Conflict';
+                            break;
+                        case 'undo': 
+                            catBadgeClass = 'bg-rose-100 text-rose-800 border-rose-200'; 
+                            catName = 'Undo / Revert';
+                            break;
                     }
+
+                    // Escape quotes for inline click handler
+                    const escapedCmd = item.cmd.replace(/'/g, "\\'");
 
                     card.innerHTML = `
                         <div>
-                            <div class="flex items-center justify-between gap-2 mb-3">
-                                <span class="text-xs font-medium px-2.5 py-1 rounded-md ${categoryBadge} uppercase tracking-wider">
-                                    ${item.category}
+                            <div class="flex items-center justify-between gap-2 mb-2.5">
+                                <span class="text-[10px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full border ${catBadgeClass}">
+                                    ${catName}
                                 </span>
-                                <button onclick="copyToClipboard('${item.cmd}')" class="text-cream-800/50 hover:text-terracotta-500 transition p-1" title="คัดลอกคำสั่ง">
+                                <button onclick="copyToClipboard('${escapedCmd}')" 
+                                        class="text-cream-700/60 hover:text-terracotta-600 transition p-1.5 rounded-lg hover:bg-cream-200/60 flex items-center gap-1 text-xs" 
+                                        title="คัดลอกคำสั่ง">
                                     <i data-lucide="copy" class="w-4 h-4"></i>
+                                    <span class="sr-only sm:not-sr-only text-[11px]">ก๊อปปี้</span>
                                 </button>
                             </div>
-                            <div class="bg-cream-900 text-cream-50 p-3 rounded-xl font-mono text-sm mb-3 flex items-center justify-between group cursor-pointer" onclick="copyToClipboard('${item.cmd}')">
-                                <span class="overflow-x-auto select-all">${item.cmd}</span>
-                                <i data-lucide="corner-down-left" class="w-4 h-4 opacity-0 group-hover:opacity-100 text-terracotta-400 transition"></i>
+                            
+                            <!-- Snippet Container -->
+                            <div onclick="copyToClipboard('${escapedCmd}')" 
+                                 class="bg-darkcode text-cream-100 p-3 rounded-xl font-mono text-xs sm:text-sm mb-3 flex items-center justify-between group/code cursor-pointer border border-cream-800/40 hover:border-terracotta-500/50 transition">
+                                <span class="overflow-x-auto whitespace-nowrap scrollbar-none pr-2 select-all font-semibold text-terracotta-400">${item.cmd}</span>
+                                <i data-lucide="corner-down-left" class="w-3.5 h-3.5 opacity-40 group-hover/code:opacity-100 text-terracotta-400 transition shrink-0"></i>
                             </div>
-                            <h3 class="font-semibold text-cream-900 text-base mb-1">${item.desc}</h3>
-                            <p class="text-cream-800/80 text-xs leading-relaxed">${item.details}</p>
+
+                            <h4 class="font-bold text-cream-900 text-sm sm:text-base mb-1">${item.desc}</h4>
+                            <p class="text-cream-700 text-xs leading-relaxed">${item.details}</p>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -357,44 +607,104 @@
             }
         }
 
-        // Copy to Clipboard Toast
+        // Copy to Clipboard with Toast Notification
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('toast');
-                document.getElementById('toastText').innerText = `คัดลอก "${text}" แล้ว`;
-                toast.classList.remove('translate-y-20', 'opacity-0');
-                setTimeout(() => {
-                    toast.classList.add('translate-y-20', 'opacity-0');
-                }, 2000);
-            });
+            // Using standard execution or fallback
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => showToast(text));
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast(text);
+                } catch (err) {
+                    console.error('Copy failed', err);
+                }
+                document.body.removeChild(textarea);
+            }
         }
 
-        // Event Listeners for Filters
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = `คัดลอก "${text}" แล้ว`;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2500);
+        }
+
+        function resetSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            currentSearchQuery = '';
+            document.getElementById('clearSearch').classList.add('hidden');
+            renderCards();
+        }
+
+        // Event Listeners initialization
         document.addEventListener('DOMContentLoaded', () => {
             renderCards();
 
-            // Search
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', (e) => {
-                const activeCat = document.querySelector('.cat-btn.bg-terracotta-500').getAttribute('data-cat');
-                renderCards(activeCat, e.target.value);
+            // Mobile Search Toggle
+            const mobileBtn = document.getElementById('mobileSearchToggle');
+            const searchContainer = document.getElementById('searchContainer');
+            mobileBtn.addEventListener('click', () => {
+                searchContainer.classList.toggle('hidden');
+                if (!searchContainer.classList.contains('hidden')) {
+                    document.getElementById('searchInput').focus();
+                }
             });
 
-            // Category Tabs
+            // Search input handling
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+
+            searchInput.addEventListener('input', (e) => {
+                currentSearchQuery = e.target.value;
+                if (currentSearchQuery.length > 0) {
+                    clearSearchBtn.classList.remove('hidden');
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                }
+                renderCards();
+            });
+
+            clearSearchBtn.addEventListener('click', resetSearch);
+
+            // Category Filter Tab buttons
             const catBtns = document.querySelectorAll('.cat-btn');
             catBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     catBtns.forEach(b => {
-                        b.classList.remove('bg-terracotta-500', 'text-white');
-                        b.classList.add('bg-cream-50', 'text-cream-800');
+                        b.classList.remove('bg-terracotta-500', 'text-white', 'shadow-sm');
+                        b.classList.add('bg-cream-100', 'text-cream-800');
                     });
-                    btn.classList.remove('bg-cream-50', 'text-cream-800');
-                    btn.classList.add('bg-terracotta-500', 'text-white');
+                    btn.classList.remove('bg-cream-100', 'text-cream-800');
+                    btn.classList.add('bg-terracotta-500', 'text-white', 'shadow-sm');
 
-                    const cat = btn.getAttribute('data-cat');
-                    renderCards(cat, searchInput.value);
+                    currentCategory = btn.getAttribute('data-cat');
+                    
+                    // Update section title text dynamically
+                    const sectionTitle = document.getElementById('sectionTitle');
+                    switch(currentCategory) {
+                        case 'basic': sectionTitle.innerText = 'คำสั่งพื้นฐาน (Workflow)'; break;
+                        case 'teamwork': sectionTitle.innerText = 'คำสั่งทำงานเป็นทีม & การจัดการ Branch'; break;
+                        case 'conflict': sectionTitle.innerText = 'การรับมือและแก้ไข Merge Conflict'; break;
+                        case 'undo': sectionTitle.innerText = 'การย้อนกลับโค้ด (Undo & Rollback)'; break;
+                        default: sectionTitle.innerText = 'คลังคำสั่ง Git ทั้งหมด'; break;
+                    }
+
+                    renderCards();
                 });
             });
+
+            // Initialize Lucide Icons
+            lucide.createIcons();
         });
     </script>
 </body>
