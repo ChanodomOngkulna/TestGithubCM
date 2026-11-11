@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git คู่มือฉบับเข้าใจง่าย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4ecd8;
+  --surface: #fbf6ea;
+  --surface-2: #efe5cf;
+  --text: #3b3127;
+  --muted: #6f6252;
+  --border: #ddcfb3;
+  --accent: #2f6f6a;
+  --accent-soft: #d9e6dc;
+  --code-ink: #8a3b2e;
+  --code-bg: #ebe0c6;
+  --comment: #8a7b66;
+  --warn-bg: #f5e2c8;
+  --warn-border: #c98a3d;
+  --tip-bg: #e1ead6;
+  --tip-border: #6b8f55;
+  --line: #9a8b74;
+  --lane-main: #7a6a55;
+  --lane-login: #3f7f6e;
+  --lane-title: #b5763a;
+  --lane-banner: #8a5a8c;
+  --bug: #b4493a;
+  --pill-bg: #e6dac0;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #1d1a16;
+  --surface: #27231e;
+  --surface-2: #2f2a23;
+  --text: #e4d9c6;
+  --muted: #a99b86;
+  --border: #3e372d;
+  --accent: #8fc1b5;
+  --accent-soft: #2c3a34;
+  --code-ink: #e3a284;
+  --code-bg: #332d25;
+  --comment: #8f826f;
+  --warn-bg: #3a2e1f;
+  --warn-border: #c99550;
+  --tip-bg: #27321f;
+  --tip-border: #8fb07a;
+  --line: #85796a;
+  --lane-main: #b6a68e;
+  --lane-login: #79b8a5;
+  --lane-title: #dba36a;
+  --lane-banner: #bf93c1;
+  --bug: #e07c6c;
+  --pill-bg: #3a332a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Sarabun", "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  font-size: 17px;
+  line-height: 1.75;
+  transition: background .2s, color .2s;
+}
+
+/* ---------- layout ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 32px 0 32px;
+}
+.toc-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc ol ol { padding-left: 14px; margin: 2px 0 8px; }
+.toc a {
+  display: block;
+  padding: 4px 10px;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 15px;
+  line-height: 1.45;
+  border-radius: 0 6px 6px 0;
+}
+.toc ol ol a { font-size: 14px; }
+.toc a:hover { color: var(--text); background: var(--surface-2); }
+.toc a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+main { padding: 40px 0 80px; max-width: 800px; }
+
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.theme-btn {
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+.theme-btn:hover { background: var(--surface-2); }
+
+/* ---------- typography ---------- */
+h1 { font-size: 40px; line-height: 1.25; margin: 0 0 6px; }
+.subtitle { color: var(--muted); margin: 0 0 32px; font-size: 18px; }
+h2 {
+  font-size: 26px;
+  line-height: 1.35;
+  margin: 48px 0 18px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+  scroll-margin-top: 20px;
+}
+h3 {
+  font-size: 19px;
+  margin: 30px 0 10px;
+  color: var(--accent);
+  scroll-margin-top: 20px;
+}
+p { margin: 0 0 14px; }
+ul { margin: 0 0 16px; padding-left: 24px; }
+li { margin: 4px 0; }
+hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0 0; }
+strong { font-weight: 700; }
+
+code {
+  font-family: "JetBrains Mono", Consolas, "Sarabun", monospace;
+  font-size: .86em;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ---------- code blocks ---------- */
+.codebox {
+  position: relative;
+  margin: 0 0 18px;
+}
+pre {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 18px;
+  overflow-x: auto;
+  font-family: "JetBrains Mono", Consolas, "Sarabun", monospace;
+  font-size: 14px;
+  line-height: 1.7;
+}
+pre code { background: none; color: var(--text); padding: 0; font-size: inherit; }
+pre .cm { color: var(--comment); }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 10px;
+  cursor: pointer;
+  opacity: .75;
+}
+.copy-btn:hover { opacity: 1; color: var(--text); }
+.copy-btn.done { color: var(--accent); opacity: 1; }
+
+/* ---------- tables ---------- */
+.table-wrap { overflow-x: auto; margin: 0 0 20px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 16px;
+}
+th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 700; }
+tr:last-child td { border-bottom: 0; }
+
+/* ---------- callouts ---------- */
+.callout {
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 0 0 18px;
+  border: 1px solid;
+  border-left-width: 4px;
+}
+.callout p:last-child, .callout ul:last-child { margin-bottom: 0; }
+.callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+.callout.tip { background: var(--tip-bg); border-color: var(--tip-border); }
+.note { color: var(--muted); font-style: italic; margin-top: 24px; }
+
+/* ---------- diagrams ---------- */
+figure.diagram {
+  margin: 0 0 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 12px 10px;
+  overflow-x: auto;
+}
+figure.diagram svg { display: block; margin: 0 auto; width: 100%; height: auto; }
+figure.diagram figcaption { color: var(--muted); font-size: 14px; text-align: center; margin-top: 6px; }
+svg text { font-family: "JetBrains Mono", Consolas, "Sarabun", monospace; fill: var(--text); }
+svg .lbl { font-size: 13px; fill: var(--muted); }
+svg .sm { font-size: 12px; }
+svg .node { fill: var(--surface); stroke-width: 2.5; }
+svg .node-t { font-size: 14px; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+svg .edge { fill: none; stroke-width: 2.5; }
+svg .box { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; }
+svg .box-t { font-family: "Sarabun", sans-serif; font-size: 15px; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+svg .pill { fill: var(--pill-bg); stroke: var(--border); }
+svg .pill-t { font-size: 12px; text-anchor: middle; dominant-baseline: central; }
+svg .arrow { fill: none; stroke: var(--line); stroke-width: 1.8; }
+.s-main { stroke: var(--lane-main); }
+.s-login { stroke: var(--lane-login); }
+.s-title { stroke: var(--lane-title); }
+.s-banner { stroke: var(--lane-banner); }
+.s-accent { stroke: var(--accent); }
+.s-bug { stroke: var(--bug); }
+svg text.f-bug { fill: var(--bug); }
+svg text.f-login { fill: var(--lane-login); }
+svg text.f-title { fill: var(--lane-title); }
+svg text.f-banner { fill: var(--lane-banner); }
+
+/* ---------- mobile ---------- */
+.toc-mobile { display: none; }
+@media (max-width: 920px) {
+  .layout { grid-template-columns: minmax(0, 1fr); padding: 0 16px; gap: 0; }
+  .toc { display: none; }
+  .toc-mobile {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 24px;
+  }
+  .toc-mobile summary { cursor: pointer; font-weight: 600; }
+  .toc-mobile ol { padding-left: 18px; margin: 8px 0 4px; }
+  .toc-mobile a { color: var(--text); text-decoration: none; }
+  main { padding-top: 20px; }
+  h1 { font-size: 30px; }
+  h2 { font-size: 22px; }
+  body { font-size: 16px; }
+  figure.diagram svg { min-width: 520px; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="layout">
+  <nav class="toc" aria-label="สารบัญ">
+    <p class="toc-title">สารบัญ</p>
+    <ol id="toc-list">
+      <li><a href="#overview">ภาพรวมก่อนเริ่ม</a></li>
+      <li><a href="#basic">1. คำสั่งพื้นฐาน</a>
+        <ol>
+          <li><a href="#basic-example">ตัวอย่าง: นาย ก สร้าง commit a</a></li>
+          <li><a href="#branch-head">Branch และ HEAD</a></li>
+        </ol>
+      </li>
+      <li><a href="#team">2. การทำงานเป็นทีม</a>
+        <ol>
+          <li><a href="#team-b">นาย ข ทำ commit b, c</a></li>
+          <li><a href="#team-pull">ทุกคนที่เหลือดึงของใหม่</a></li>
+          <li><a href="#team-moved">ถ้า main ขยับไปแล้ว</a></li>
+        </ol>
+      </li>
+      <li><a href="#conflict">3. การแก้ Conflict</a>
+        <ol>
+          <li><a href="#conflict-case">สถานการณ์</a></li>
+          <li><a href="#conflict-steps">ขั้นตอนแก้</a></li>
+        </ol>
+      </li>
+      <li><a href="#revert">4. การย้อน Version</a>
+        <ol>
+          <li><a href="#case-a">กรณี A: ดูของเก่า</a></li>
+          <li><a href="#case-b">กรณี B: ทิ้งสิ่งที่แก้</a></li>
+          <li><a href="#case-c">กรณี C: git revert</a></li>
+          <li><a href="#case-d">กรณี D: git reset</a></li>
+          <li><a href="#summary">สรุปว่าใช้อะไรเมื่อไหร่</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="topbar">
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="สลับโหมดสี">🌙 โหมดมืด</button>
+    </div>
+
+    <h1>Git คู่มือฉบับเข้าใจง่าย</h1>
+    <p class="subtitle">คำสั่งพื้นฐาน · การทำงานเป็นทีม · การแก้ Conflict · การย้อน Version</p>
+
+    <details class="toc-mobile">
+      <summary>สารบัญ</summary>
+      <ol>
+        <li><a href="#overview">ภาพรวมก่อนเริ่ม</a></li>
+        <li><a href="#basic">1. คำสั่งพื้นฐาน</a></li>
+        <li><a href="#team">2. การทำงานเป็นทีม</a></li>
+        <li><a href="#conflict">3. การแก้ Conflict</a></li>
+        <li><a href="#revert">4. การย้อน Version</a></li>
+      </ol>
+    </details>
+
+    <!-- ================= ภาพรวม ================= -->
+    <h2 id="overview">ภาพรวมก่อนเริ่ม: Git เก็บอะไร และเก็บที่ไหน</h2>
+    <p>Git เก็บ "ภาพถ่าย (snapshot) ของโปรเจกต์" เป็นช่วงๆ แต่ละภาพเรียกว่า <strong>commit</strong> และแต่ละ commit รู้ว่าตัวเองต่อจาก commit ไหน ไฟล์ของคุณเดินทางผ่าน 4 ที่:</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 170" role="img" aria-label="Working dir ไป Staging ด้วย git add, ไป Local repo ด้วย git commit, ไป GitHub ด้วย git push และ git pull ดึงจาก GitHub กลับมา">
+        <rect class="box" x="0" y="40" width="140" height="56" rx="8"/>
+        <text class="box-t" x="70" y="68">Working dir</text>
+        <rect class="box" x="206" y="40" width="140" height="56" rx="8"/>
+        <text class="box-t" x="276" y="68">Staging</text>
+        <rect class="box" x="412" y="40" width="140" height="56" rx="8"/>
+        <text class="box-t" x="482" y="68">Local repo</text>
+        <rect class="box" x="618" y="40" width="140" height="56" rx="8"/>
+        <text class="box-t" x="688" y="68">GitHub</text>
+
+        <line class="arrow" x1="142" y1="68" x2="203" y2="68" marker-end="url(#arr)"/>
+        <text class="sm" x="173" y="28" text-anchor="middle">git add</text>
+        <line class="arrow" x1="348" y1="68" x2="409" y2="68" marker-end="url(#arr)"/>
+        <text class="sm" x="379" y="28" text-anchor="middle">git commit</text>
+        <line class="arrow" x1="554" y1="68" x2="615" y2="68" marker-end="url(#arr)"/>
+        <text class="sm" x="585" y="28" text-anchor="middle">git push</text>
+
+        <path class="arrow" d="M688,98 V132 H482 V101" marker-end="url(#arr)"/>
+        <text class="sm" x="585" y="154" text-anchor="middle">git pull</text>
+      </svg>
+    </figure>
+
+    <ul>
+      <li><strong>Working dir</strong> คือไฟล์ที่คุณเปิดแก้อยู่ในเครื่อง</li>
+      <li><strong>Staging</strong> คือที่พักของที่เลือกไว้ว่า "รอบนี้จะเก็บอันนี้"</li>
+      <li><strong>Local repo</strong> คือประวัติในเครื่องคุณ</li>
+      <li><strong>GitHub (remote)</strong> คือประวัติกลางที่ทั้งทีมใช้ร่วมกัน</li>
+    </ul>
+
+    <p>ตลอดคู่มือนี้ ใช้ทีมสมมติ 4 คน และ commit 5 อัน:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>commit</th><th>ใคร</th><th>ทำอะไร</th></tr></thead>
+        <tbody>
+          <tr><td><strong>a</strong></td><td>นาย ก</td><td>สร้างโปรเจกต์ (README.md บรรทัดแรกคือ <code># Shop</code>)</td></tr>
+          <tr><td><strong>b, c</strong></td><td>นาย ข</td><td>ทำหน้า login (2 commit)</td></tr>
+          <tr><td><strong>d</strong></td><td>นาย ค</td><td>แก้ชื่อใน README เป็น <code># Shop Online</code></td></tr>
+          <tr><td><strong>e</strong></td><td>นาย ง</td><td>แก้ชื่อใน README เป็น <code># Shop Mall</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+
+    <!-- ================= 1 ================= -->
+    <h2 id="basic">1. คำสั่งพื้นฐาน</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>คำสั่ง</th><th>ทำอะไร</th></tr></thead>
+        <tbody>
+          <tr><td><code>git clone &lt;url&gt;</code></td><td>ดาวน์โหลด repo จาก GitHub มาทั้งประวัติ</td></tr>
+          <tr><td><code>git init</code></td><td>สร้าง repo ใหม่ในเครื่อง (ถ้า clone แล้วไม่ต้องใช้)</td></tr>
+          <tr><td><code>git status</code></td><td>ดูว่าไฟล์ไหนแก้แล้ว / add แล้ว / ยังไม่ติดตาม</td></tr>
+          <tr><td><code>git diff</code></td><td>ดูว่าแก้อะไรไปบ้าง (ที่ยังไม่ add)</td></tr>
+          <tr><td><code>git add &lt;ไฟล์&gt;</code></td><td>เลือกไฟล์เข้า Staging (<code>git add .</code> = เลือกทุกไฟล์ที่เปลี่ยน)</td></tr>
+          <tr><td><code>git commit -m "ข้อความ"</code></td><td>บันทึก snapshot จากของใน Staging</td></tr>
+          <tr><td><code>git log --oneline</code></td><td>ดูประวัติ commit แบบสั้น</td></tr>
+          <tr><td><code>git push</code></td><td>ส่ง commit ในเครื่องขึ้น GitHub</td></tr>
+          <tr><td><code>git pull</code></td><td>ดึงของใหม่จาก GitHub แล้วรวมเข้ากับของเรา</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="basic-example">ตัวอย่าง: นาย ก สร้าง commit a</h3>
+<pre><code>git clone https://github.com/team/shop.git
+cd shop
+<span class="cm"># สร้างไฟล์ README.md ที่มีบรรทัด  # Shop</span>
+git status                          <span class="cm"># เห็น README.md เป็น untracked</span>
+git add README.md
+git commit -m "a: เริ่มต้นโปรเจกต์"
+git push</code></pre>
+
+    <h3 id="branch-head">Branch และ HEAD ที่ต้องเข้าใจ</h3>
+    <ul>
+      <li><strong>Branch</strong> คือ "ป้ายชื่อ" ที่ชี้ไปที่ commit หนึ่ง (ไม่ใช่การ copy โปรเจกต์)</li>
+      <li><strong>HEAD</strong> คือ "ตำแหน่งที่คุณยืนอยู่ตอนนี้" ปกติชี้ไปที่ branch ที่คุณใช้อยู่</li>
+    </ul>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 420 150" style="max-width:420px" role="img" aria-label="commit a, b, c ต่อกัน ป้าย main ชี้ที่ c และ HEAD ชี้ที่ main">
+        <line class="edge s-main" x1="40" y1="40" x2="240" y2="40"/>
+        <circle class="node s-main" cx="40" cy="40" r="18"/><text class="node-t" x="40" y="40">a</text>
+        <circle class="node s-main" cx="140" cy="40" r="18"/><text class="node-t" x="140" y="40">b</text>
+        <circle class="node s-main" cx="240" cy="40" r="18"/><text class="node-t" x="240" y="40">c</text>
+        <rect class="pill" x="210" y="100" width="60" height="24" rx="12"/><text class="pill-t" x="240" y="112">main</text>
+        <line class="arrow" x1="240" y1="98" x2="240" y2="62" marker-end="url(#arr)"/>
+        <rect class="pill" x="330" y="100" width="60" height="24" rx="12"/><text class="pill-t" x="360" y="112">HEAD</text>
+        <line class="arrow" x1="328" y1="112" x2="274" y2="112" marker-end="url(#arr)"/>
+      </svg>
+    </figure>
+    <p>(ลูกศรจริงๆ ชี้ย้อนกลับไปหา commit ก่อนหน้า แต่วาดแบบนี้อ่านง่ายกว่า)</p>
+
+    <hr>
+
+    <!-- ================= 2 ================= -->
+    <h2 id="team">2. การทำงานเป็นทีม</h2>
+    <p>หลักการคือ <strong>ไม่ทำงานบน main ตรงๆ</strong> ทุกคนแตก branch ของตัวเอง แล้วขอรวมผ่าน Pull Request (PR)</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 220" role="img" aria-label="main ที่ commit a แตกออกเป็น 3 branch: feature-login มี b และ c ของนาย ข, feature-title มี d ของนาย ค, feature-banner มี e ของนาย ง">
+        <text class="lbl" x="10" y="115">main:</text>
+        <path class="edge s-login" d="M118,110 C160,110 160,40 202,40 H302"/>
+        <path class="edge s-title" d="M118,110 H202"/>
+        <path class="edge s-banner" d="M118,110 C160,110 160,180 202,180"/>
+        <circle class="node s-main" cx="100" cy="110" r="18"/><text class="node-t" x="100" y="110">a</text>
+        <circle class="node s-login" cx="220" cy="40" r="18"/><text class="node-t" x="220" y="40">b</text>
+        <circle class="node s-login" cx="320" cy="40" r="18"/><text class="node-t" x="320" y="40">c</text>
+        <circle class="node s-title" cx="220" cy="110" r="18"/><text class="node-t" x="220" y="110">d</text>
+        <circle class="node s-banner" cx="220" cy="180" r="18"/><text class="node-t" x="220" y="180">e</text>
+        <text class="f-login" x="390" y="45" font-size="14">feature-login   (ข)</text>
+        <text class="f-title" x="390" y="115" font-size="14">feature-title   (ค)</text>
+        <text class="f-banner" x="390" y="185" font-size="14">feature-banner  (ง)</text>
+      </svg>
+    </figure>
+    <p>ทั้ง 3 คนแตกออกมาจาก a พร้อมกัน และทำงานขนานกันโดยไม่เหยียบกัน</p>
+
+    <h3 id="team-b">นาย ข ทำ commit b, c</h3>
+<pre><code>git switch main
+git pull origin main                <span class="cm"># ดึงของล่าสุดก่อนเริ่มทุกครั้ง</span>
+git switch -c feature-login         <span class="cm"># สร้าง branch ใหม่แล้วย้ายไปอยู่</span>
+                                    <span class="cm"># (ใช้ git checkout -b ก็ได้ผลเหมือนกัน)</span>
+
+<span class="cm"># แก้ไฟล์ แล้ว</span>
+git add .
+git commit -m "b: เพิ่มฟอร์ม login"
+<span class="cm"># แก้ต่อ แล้ว</span>
+git add .
+git commit -m "c: เพิ่ม validation"
+
+git push -u origin feature-login    <span class="cm"># -u ครั้งแรกครั้งเดียว ผูก branch เครื่องเรากับ GitHub</span></code></pre>
+
+    <p>จากนั้นไปที่ GitHub กด <strong>Compare &amp; pull request</strong> (base: <code>main</code> ← compare: <code>feature-login</code>) แล้วให้เพื่อนรีวิว เมื่อ Approve แล้วกด <strong>Merge</strong></p>
+    <p>หลัง merge แบบปกติของ GitHub (Create a merge commit) หน้าตาของ main จะเป็น:</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 500 160" style="max-width:500px" role="img" aria-label="main: a ไป M โดย b และ c จาก feature-login รวมเข้าที่ M">
+        <line class="edge s-main" x1="40" y1="40" x2="360" y2="40"/>
+        <path class="edge s-login" d="M40,40 C60,110 80,110 120,110 H240 C300,110 330,90 360,40"/>
+        <circle class="node s-main" cx="40" cy="40" r="18"/><text class="node-t" x="40" y="40">a</text>
+        <circle class="node s-login" cx="120" cy="110" r="18"/><text class="node-t" x="120" y="110">b</text>
+        <circle class="node s-login" cx="240" cy="110" r="18"/><text class="node-t" x="240" y="110">c</text>
+        <circle class="node s-main" cx="360" cy="40" r="20"/><text class="node-t" x="360" y="40">M</text>
+        <rect class="pill" x="410" y="28" width="60" height="24" rx="12"/><text class="pill-t" x="440" y="40">main</text>
+        <line class="arrow" x1="408" y1="40" x2="384" y2="40" marker-end="url(#arr)"/>
+      </svg>
+      <figcaption>M = merge commit ที่ GitHub สร้างให้</figcaption>
+    </figure>
+
+    <h3 id="team-pull">ทุกคนที่เหลือต้องดึงของใหม่ลงเครื่อง</h3>
+<pre><code>git switch main
+git pull origin main</code></pre>
+
+    <h3 id="team-moved">ถ้า main ขยับไปแล้วระหว่างที่คุณทำงาน</h3>
+    <p>เช่น นาย ค ทำ d อยู่ แต่ main มี M แล้ว ให้เอา main มารวมใน branch ตัวเองก่อนส่ง PR:</p>
+<pre><code>git switch feature-title
+git pull origin main        <span class="cm"># = git fetch + git merge origin/main รวมกัน</span></code></pre>
+    <p>ถ้าแก้คนละไฟล์หรือคนละบรรทัด Git รวมให้เองอัตโนมัติ แต่ถ้าแก้ <strong>บรรทัดเดียวกัน</strong> จะเกิด conflict ซึ่งคือหัวข้อต่อไป</p>
+
+    <hr>
+
+    <!-- ================= 3 ================= -->
+    <h2 id="conflict">3. การแก้ Conflict</h2>
+    <p><strong>Conflict คืออะไร:</strong> เกิดเมื่อสอง branch แก้ "จุดเดียวกัน" ของไฟล์เดียวกันจากฐานเดิมเดียวกัน แล้ว Git ไม่รู้ว่าจะเลือกอันไหน (Git ไม่มีทางรู้ว่าคุณอยากได้ <code>Shop Online</code> หรือ <code>Shop Mall</code> เลยหยุดแล้วให้คนตัดสิน)</p>
+
+    <h3 id="conflict-case">สถานการณ์</h3>
+    <p>ทั้ง ค และ ง แตกจาก a แล้วแก้บรรทัดแรกของ README.md</p>
+<pre><code># Shop          <span class="cm">← ฐานเดิม (a)</span>
+# Shop Online   <span class="cm">← ค (d)</span>
+# Shop Mall     <span class="cm">← ง (e)</span></code></pre>
+
+    <p>PR ของ ค ถูก merge เข้า main ก่อน ตอนนี้ main บรรทัดแรกเป็น <code># Shop Online</code> พอ ง เอา main มารวม:</p>
+<pre><code>git switch feature-banner
+git fetch origin
+git merge origin/main</code></pre>
+
+    <p>Git ตอบว่า:</p>
+<pre><code>CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+
+    <p><code>git status</code> จะแสดง <code>both modified: README.md</code> ใต้หัวข้อ <em>Unmerged paths</em> และไฟล์จะถูก Git เขียนเครื่องหมายไว้ให้:</p>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+# Shop Mall
+=======
+# Shop Online
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</code></pre>
+
+    <p>วิธีอ่าน:</p>
+    <ul>
+      <li>ระหว่าง <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> กับ <code>=======</code> คือ <strong>ฝั่งเรา</strong> (ของ ง ที่ branch ปัจจุบัน)</li>
+      <li>ระหว่าง <code>=======</code> กับ <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> คือ <strong>ฝั่งที่เอามารวม</strong> (ของ ค จาก main)</li>
+    </ul>
+
+    <h3 id="conflict-steps">ขั้นตอนแก้</h3>
+    <p><strong>ขั้นที่ 1: แก้ไฟล์</strong> ตัดสินใจว่าจะเอาอะไร (เอาของใครคนเดียว หรือผสม เช่น <code># Shop Mall Online</code>) แล้ว <strong>ลบบรรทัดเครื่องหมายทั้ง 3 แบบออกให้หมด</strong> ผลลัพธ์ต้องเหลือแค่:</p>
+<pre><code># Shop Mall Online</code></pre>
+    <p>(ถ้าใช้ VS Code จะมีปุ่ม Accept Current / Incoming / Both ให้กดแทนการลบเอง)</p>
+
+    <p><strong>ขั้นที่ 2: บอก Git ว่าแก้เสร็จแล้ว</strong></p>
+<pre><code>git add README.md
+git commit              <span class="cm"># Git เตรียมข้อความ merge ให้แล้ว กด save ได้เลย</span>
+git push</code></pre>
+
+    <p><strong>ขั้นที่ 3:</strong> PR บน GitHub จะอัปเดตเอง และข้อความ conflict หายไป</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 640 170" role="img" aria-label="main: a ไป M2, feature-banner: แตกจาก a ไป e แล้วรวม M2 เข้ามาเป็น M3">
+        <text class="lbl" x="10" y="55">main:</text>
+        <text class="lbl" x="10" y="135">feature-banner:</text>
+        <line class="edge s-main" x1="170" y1="50" x2="310" y2="50"/>
+        <path class="edge s-main" d="M310,50 H470 C510,50 520,90 540,130"/>
+        <path class="edge s-banner" d="M170,50 C190,130 210,130 250,130 H540"/>
+        <circle class="node s-main" cx="170" cy="50" r="18"/><text class="node-t" x="170" y="50">a</text>
+        <circle class="node s-main" cx="310" cy="50" r="20"/><text class="node-t" x="310" y="50">M2</text>
+        <circle class="node s-banner" cx="270" cy="130" r="18"/><text class="node-t" x="270" y="130">e</text>
+        <circle class="node s-accent" cx="540" cy="130" r="20"/><text class="node-t" x="540" y="130">M3</text>
+      </svg>
+      <figcaption>M3 = merge commit ที่แก้ conflict แล้ว</figcaption>
+    </figure>
+
+    <p><strong>ถ้าตกใจ อยากยกเลิกกลับไปก่อนเริ่ม merge:</strong> <code>git merge --abort</code></p>
+
+    <div class="callout warn">
+      <p><strong>ข้อควรระวัง:</strong> ถ้าไม่แน่ใจว่าบรรทัดของอีกฝั่งสำคัญอย่างไร ให้ถามเจ้าของ commit นั้นก่อนตัดสินใจ อย่าเลือกเอาของตัวเองไว้ก่อนโดยไม่ดู</p>
+    </div>
+
+    <hr>
+
+    <!-- ================= 4 ================= -->
+    <h2 id="revert">4. การย้อน Version</h2>
+    <p>เพื่อความง่าย สมมติ main มี 5 commit ต่อกันเป็นเส้นตรง และพบว่า <strong>d (ของ ค) มี bug</strong></p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 640 160" role="img" aria-label="main เส้นตรง a ของ ก, b ของ ข, c ของ ข, d ของ ค ซึ่งมี bug, e ของ ง; main ชี้ที่ e และ HEAD ชี้ที่ main">
+        <line class="edge s-main" x1="40" y1="40" x2="440" y2="40"/>
+        <circle class="node s-main" cx="40" cy="40" r="18"/><text class="node-t" x="40" y="40">a</text>
+        <circle class="node s-login" cx="140" cy="40" r="18"/><text class="node-t" x="140" y="40">b</text>
+        <circle class="node s-login" cx="240" cy="40" r="18"/><text class="node-t" x="240" y="40">c</text>
+        <circle class="node s-bug" cx="340" cy="40" r="18"/><text class="node-t" x="340" y="40">d</text>
+        <circle class="node s-banner" cx="440" cy="40" r="18"/><text class="node-t" x="440" y="40">e</text>
+        <text class="lbl" x="40" y="80" text-anchor="middle">(ก)</text>
+        <text class="lbl" x="140" y="80" text-anchor="middle">(ข)</text>
+        <text class="lbl" x="240" y="80" text-anchor="middle">(ข)</text>
+        <text class="lbl" x="340" y="80" text-anchor="middle">(ค)</text>
+        <text class="sm f-bug" x="340" y="98" text-anchor="middle">bug</text>
+        <text class="lbl" x="440" y="80" text-anchor="middle">(ง)</text>
+        <rect class="pill" x="410" y="118" width="60" height="24" rx="12"/><text class="pill-t" x="440" y="130">main</text>
+        <line class="arrow" x1="440" y1="116" x2="440" y2="96" marker-end="url(#arr)"/>
+        <rect class="pill" x="540" y="118" width="60" height="24" rx="12"/><text class="pill-t" x="570" y="130">HEAD</text>
+        <line class="arrow" x1="538" y1="130" x2="474" y2="130" marker-end="url(#arr)"/>
+      </svg>
+    </figure>
+
+    <p>คำถามแรกที่ต้องตอบก่อนเลือกคำสั่ง คือ <strong>ของที่จะย้อนนั้น push ขึ้น GitHub ไปแล้วหรือยัง</strong></p>
+
+    <h3 id="case-a">กรณี A: แค่อยากดูของเก่า (ไม่แก้ประวัติ)</h3>
+<pre><code>git log --oneline                 <span class="cm"># หา hash ของ commit ที่ต้องการ</span>
+git show b:README.md              <span class="cm"># ดูไฟล์นี้ ณ commit b</span>
+git switch --detach b             <span class="cm"># ย้ายไปอยู่ที่ b ทั้งโปรเจกต์ (detached HEAD)</span>
+git switch main                   <span class="cm"># กลับมา</span></code></pre>
+    <p>ตอน detached HEAD ให้ดูอย่างเดียว อย่า commit เพราะ commit จะไม่อยู่บน branch ไหน</p>
+
+    <h3 id="case-b">กรณี B: ยังไม่ commit แล้วอยากทิ้งสิ่งที่แก้</h3>
+<pre><code>git restore README.md             <span class="cm"># ไฟล์กลับไปเหมือน commit ล่าสุด</span>
+git restore --staged README.md    <span class="cm"># (ถ้า add ไปแล้ว) เอาออกจาก Staging ก่อน</span></code></pre>
+    <div class="callout warn">
+      <p><strong>ระวัง:</strong> คำสั่งนี้ทิ้งการแก้ไขถาวร เรียกคืนไม่ได้</p>
+    </div>
+
+    <h3 id="case-c">กรณี C: push ไปแล้ว (คนอื่นอาจดึงไปใช้แล้ว) → ใช้ <code>git revert</code></h3>
+    <p><code>revert</code> ไม่ลบประวัติ แต่ <strong>สร้าง commit ใหม่ที่ทำตรงข้าม</strong> กับของเดิม</p>
+<pre><code>git revert d
+git push</code></pre>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 600 90" style="max-width:600px" role="img" aria-label="a, b, c, d, e แล้วต่อด้วย f ซึ่งเป็น commit ใหม่">
+        <line class="edge s-main" x1="40" y1="40" x2="540" y2="40"/>
+        <circle class="node s-main" cx="40" cy="40" r="18"/><text class="node-t" x="40" y="40">a</text>
+        <circle class="node s-main" cx="140" cy="40" r="18"/><text class="node-t" x="140" y="40">b</text>
+        <circle class="node s-main" cx="240" cy="40" r="18"/><text class="node-t" x="240" y="40">c</text>
+        <circle class="node s-main" cx="340" cy="40" r="18"/><text class="node-t" x="340" y="40">d</text>
+        <circle class="node s-main" cx="440" cy="40" r="18"/><text class="node-t" x="440" y="40">e</text>
+        <circle class="node s-accent" cx="540" cy="40" r="20"/><text class="node-t" x="540" y="40">f</text>
+      </svg>
+      <figcaption>f = commit ใหม่ที่ "ยกเลิกสิ่งที่ d ทำ"</figcaption>
+    </figure>
+
+    <p>ประวัติครบ ทุกคน <code>git pull</code> แล้วได้ผลเหมือนกัน นี่คือวิธีที่ปลอดภัยสำหรับ branch ที่แชร์กัน</p>
+
+    <div class="callout tip">
+      <p><strong>ข้อควรรู้:</strong> ถ้า e แก้ทับจุดเดียวกับ d อาจเกิด conflict ตอน revert ให้แก้แบบหัวข้อ 3 และถ้า commit ที่จะ revert เป็น merge commit ต้องเติม <code>-m 1</code> (เช่น <code>git revert -m 1 &lt;hash&gt;</code>)</p>
+    </div>
+
+    <h3 id="case-d">กรณี D: commit ในเครื่อง ยังไม่ push → ใช้ <code>git reset</code></h3>
+    <p><code>reset</code> คือ <strong>ย้ายป้าย branch ถอยกลับ</strong> สมมติ d, e ยังอยู่แค่ในเครื่อง:</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 680 150" role="img" aria-label="ก่อน: a b c d e โดย main ชี้ที่ e; หลัง git reset --hard c: a b c โดย main ชี้ที่ c">
+        <text class="lbl" x="10" y="45">ก่อน:</text>
+        <line class="edge s-main" x1="90" y1="40" x2="490" y2="40"/>
+        <circle class="node s-main" cx="90" cy="40" r="18"/><text class="node-t" x="90" y="40">a</text>
+        <circle class="node s-main" cx="190" cy="40" r="18"/><text class="node-t" x="190" y="40">b</text>
+        <circle class="node s-main" cx="290" cy="40" r="18"/><text class="node-t" x="290" y="40">c</text>
+        <circle class="node s-main" cx="390" cy="40" r="18"/><text class="node-t" x="390" y="40">d</text>
+        <circle class="node s-main" cx="490" cy="40" r="18"/><text class="node-t" x="490" y="40">e</text>
+        <rect class="pill" x="540" y="28" width="60" height="24" rx="12"/><text class="pill-t" x="570" y="40">main</text>
+        <line class="arrow" x1="538" y1="40" x2="512" y2="40" marker-end="url(#arr)"/>
+
+        <text class="lbl" x="10" y="115">หลัง:</text>
+        <line class="edge s-main" x1="90" y1="110" x2="290" y2="110"/>
+        <circle class="node s-main" cx="90" cy="110" r="18"/><text class="node-t" x="90" y="110">a</text>
+        <circle class="node s-main" cx="190" cy="110" r="18"/><text class="node-t" x="190" y="110">b</text>
+        <circle class="node s-main" cx="290" cy="110" r="18"/><text class="node-t" x="290" y="110">c</text>
+        <rect class="pill" x="340" y="98" width="60" height="24" rx="12"/><text class="pill-t" x="370" y="110">main</text>
+        <line class="arrow" x1="338" y1="110" x2="312" y2="110" marker-end="url(#arr)"/>
+        <text class="sm" x="430" y="114" style="fill:var(--muted)">(git reset --hard c)</text>
+      </svg>
+    </figure>
+
+    <p>มี 3 โหมด:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>โหมด</th><th>ป้าย branch</th><th>การเปลี่ยนแปลงของ d, e</th></tr></thead>
+        <tbody>
+          <tr><td><code>--soft</code></td><td>ถอยไป c</td><td>ยังอยู่ใน Staging พร้อม commit ใหม่ได้เลย</td></tr>
+          <tr><td><code>--mixed</code> (ค่าเริ่มต้น)</td><td>ถอยไป c</td><td>ยังอยู่ในไฟล์ แต่ไม่อยู่ใน Staging</td></tr>
+          <tr><td><code>--hard</code></td><td>ถอยไป c</td><td><strong>ทิ้งทั้งหมด</strong> ไฟล์ในเครื่องกลับไปเหมือน c</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <p><strong>ข้อควรระวัง:</strong></p>
+      <ul>
+        <li><code>--hard</code> ทิ้งการแก้ที่ยังไม่ commit ด้วย และกู้ไม่ได้</li>
+        <li>ห้าม reset แล้ว <code>push --force</code> บน main ที่ทีมใช้ เพราะคนที่ดึง d, e ไปแล้วจะมีประวัติไม่ตรงกับ GitHub</li>
+      </ul>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>ตาข่ายนิรภัย:</strong> ถ้า reset พลาด ใช้ <code>git reflog</code> ดูรายการตำแหน่งที่ HEAD เคยอยู่ แล้ว <code>git reset --hard &lt;hash&gt;</code> เพื่อกลับ (ใช้ได้กับของที่เคย commit ไว้แล้วเท่านั้น และ Git เก็บ reflog ไว้ตามค่าเริ่มต้นประมาณ 90 วัน ส่วน commit ที่ไม่มี branch ชี้อยู่เก็บประมาณ 30 วัน)</p>
+    </div>
+
+    <h3 id="summary">สรุปว่าใช้อะไรเมื่อไหร่</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>สถานการณ์</th><th>คำสั่ง</th></tr></thead>
+        <tbody>
+          <tr><td>ดูของเก่าเฉยๆ</td><td><code>git switch --detach &lt;hash&gt;</code></td></tr>
+          <tr><td>ทิ้งการแก้ที่ยังไม่ commit</td><td><code>git restore &lt;ไฟล์&gt;</code></td></tr>
+          <tr><td>commit แล้ว <strong>push แล้ว</strong></td><td><code>git revert &lt;hash&gt;</code></td></tr>
+          <tr><td>commit แล้ว <strong>ยังไม่ push</strong></td><td><code>git reset</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+    <p class="note">หมายเหตุ: ตัวอย่างสมมติว่าทีมรวมโค้ดผ่าน PR บน GitHub แบบ Create a merge commit (ค่าเริ่มต้น) ถ้าทีมตั้งเป็น Squash and merge ภาพของ main จะต่างจากที่วาดไว้</p>
+  </main>
+</div>
+
+<script>
+(function () {
+  /* ---------- theme toggle ---------- */
+  var root = document.documentElement;
+  var btn = document.getElementById('themeBtn');
+  function apply(t) {
+    if (t === 'dark') { root.setAttribute('data-theme', 'dark'); btn.textContent = '☀️ โหมดสว่าง'; }
+    else { root.removeAttribute('data-theme'); btn.textContent = '🌙 โหมดมืด'; }
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('git-guide-theme'); } catch (e) {}
+  apply(saved);
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    apply(next);
+    try { localStorage.setItem('git-guide-theme', next); } catch (e) {}
+  });
+
+  /* ---------- copy buttons ---------- */
+  document.querySelectorAll('main pre').forEach(function (pre) {
+    var box = document.createElement('div');
+    box.className = 'codebox';
+    pre.parentNode.insertBefore(box, pre);
+    box.appendChild(pre);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'copy-btn';
+    b.textContent = 'Copy';
+    function ok() {
+      b.textContent = 'Copied ✓'; b.classList.add('done');
+      setTimeout(function () { b.textContent = 'Copy'; b.classList.remove('done'); }, 1500);
+    }
+    function fallback(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); ok(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    b.addEventListener('click', function () {
+      var text = pre.innerText;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(ok, function () { fallback(text); });
+      } else { fallback(text); }
+    });
+    box.appendChild(b);
+  });
+
+  /* ---------- scroll spy ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc-list a'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  function onScroll() {
+    var y = window.scrollY + 120, idx = 0;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) idx = i; });
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) idx = targets.length - 1;
+    links.forEach(function (a, i) { a.classList.toggle('active', i === idx); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
